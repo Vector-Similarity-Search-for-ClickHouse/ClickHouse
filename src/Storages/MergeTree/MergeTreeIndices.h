@@ -208,6 +208,9 @@ private:
     Validators validators;
 };
 
+MergeTreeIndexPtr skipEvenIndexCreator(const IndexDescription & index);
+void skipEvenIndexValidator(const IndexDescription & index, bool attach);
+
 MergeTreeIndexPtr minmaxIndexCreator(const IndexDescription & index);
 void minmaxIndexValidator(const IndexDescription & index, bool attach);
 
