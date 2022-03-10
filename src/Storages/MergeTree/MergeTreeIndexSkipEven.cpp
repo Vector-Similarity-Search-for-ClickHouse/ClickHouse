@@ -6,6 +6,7 @@
 #include <Parsers/ASTFunction.h>
 
 #include "MergeTreeIndices.h"
+#include <Common/FieldVisitorsAccurateComparison.h>
 
 namespace DB
 {
@@ -16,16 +17,10 @@ MergeTreeIndexGranuleSkipEven::MergeTreeIndexGranuleSkipEven(const String & inde
 {}
 
 void MergeTreeIndexGranuleSkipEven::serializeBinary(WriteBuffer & /*ostr*/) const
-{
-//    ostr.write("kek", 3);
-//    ostr.finalize();
-}
+{}
 
 void MergeTreeIndexGranuleSkipEven::deserializeBinary(ReadBuffer & /*istr*/, MergeTreeIndexVersion /*version*/)
-{
-//    char kek[3];
-//    istr.read(kek, 3);
-}
+{}
 
 bool MergeTreeIndexGranuleSkipEven::empty() const
 {
@@ -41,7 +36,7 @@ MergeTreeIndexAggregatorSkipEven::MergeTreeIndexAggregatorSkipEven(const String 
 
 bool MergeTreeIndexAggregatorSkipEven::empty() const
 {
-    return false;
+    return true;
 }
 
 MergeTreeIndexGranulePtr MergeTreeIndexAggregatorSkipEven::getGranuleAndReset()
@@ -49,9 +44,16 @@ MergeTreeIndexGranulePtr MergeTreeIndexAggregatorSkipEven::getGranuleAndReset()
     return std::make_shared<MergeTreeIndexGranuleSkipEven>(index_name, index_sample_block);
 }
 
-void MergeTreeIndexAggregatorSkipEven::update(const Block & /*block*/, size_t * /*pos*/, size_t /*limit*/)
+void MergeTreeIndexAggregatorSkipEven::update(const Block & block, size_t * pos, size_t limit)
 {
-    // pass
+    if (*pos >= block.rows())
+        throw Exception(
+                "The provided position is not less than the number of block rows. Position: "
+                + toString(*pos) + ", Block rows: " + toString(block.rows()) + ".", ErrorCodes::LOGICAL_ERROR);
+
+    size_t rows_read = std::min(limit, block.rows() - *pos);
+
+    *pos += rows_read;
 }
 
 
@@ -69,8 +71,8 @@ bool MergeTreeIndexConditionSkipEven::alwaysUnknownOrTrue() const
 
 bool MergeTreeIndexConditionSkipEven::mayBeTrueOnGranule(MergeTreeIndexGranulePtr /*idx_granule*/) const
 {
-    int num = rand() % 2;
-    return num == 1;
+    static std::size_t num = 1;
+    return num++ % 2 == 0;
 }
 
 
@@ -95,24 +97,18 @@ MergeTreeIndexConditionPtr MergeTreeIndexSkipEven::createIndexCondition(
     return std::make_shared<MergeTreeIndexConditionSkipEven>(index, query, context);
 }
 
-bool MergeTreeIndexSkipEven::mayBenefitFromIndexForIn(const ASTPtr & node) const
+bool MergeTreeIndexSkipEven::mayBenefitFromIndexForIn(const ASTPtr & /*node*/) const
 {
-    const String column_name = node->getColumnName();
-
-    for (const auto & cname : index.column_names)
-        if (column_name == cname)
-            return true;
-
-    if (const auto * func = typeid_cast<const ASTFunction *>(node.get()))
-        if (func->arguments->children.size() == 1)
-            return mayBenefitFromIndexForIn(func->arguments->children.front());
-
-    return false;
+    return true;
 }
 
-MergeTreeIndexFormat MergeTreeIndexSkipEven::getDeserializedFormat(const DiskPtr /*disk*/, const std::string & /*path_prefix*/) const
+MergeTreeIndexFormat MergeTreeIndexSkipEven::getDeserializedFormat(const DiskPtr disk, const std::string & relative_path_prefix) const
 {
-    return {1, ".idx"};
+    if (disk->exists(relative_path_prefix + ".idx2"))
+        return {2, ".idx2"};
+    else if (disk->exists(relative_path_prefix + ".idx"))
+        return {1, ".idx"};
+    return {0 /* unknown */, ""};
 }
 
 MergeTreeIndexPtr skipEvenIndexCreator(
@@ -122,7 +118,6 @@ MergeTreeIndexPtr skipEvenIndexCreator(
 }
 
 void skipEvenIndexValidator(const IndexDescription & /* index */, bool /* attach */)
-{
-}
+{}
 
 }
