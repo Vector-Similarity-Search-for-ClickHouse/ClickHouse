@@ -1,0 +1,253 @@
+add_library(distance_measures_one_to_one_common SHARED common.h)
+
+set(SOURCES
+data_format_datapoint
+oss_wrappers_scann_bits
+utils_types
+)
+
+target_link_libraries(distance_measures_one_to_one_common INTERFACE ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_binary_distance_measure_base SHARED
+binary_distance_measure_base.cc 
+binary_distance_measure_base.h)
+
+set(SOURCES
+distance_measures_one_to_one_common
+distance_measures_distance_measure_base
+
+absl::bits
+)
+
+target_link_libraries(distance_measures_one_to_one_binary_distance_measure_base PUBLIC ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_cosine_distance STATIC
+cosine_distance.cc 
+cosine_distance.h)
+
+set(SOURCES
+distance_measures_one_to_one_binary_distance_measure_base
+distance_measures_one_to_one_common
+distance_measures_one_to_one_dot_product
+distance_measures_distance_measure_base
+oss_wrappers_scann_bits
+utils_types
+
+absl::bits
+)
+
+target_link_libraries(distance_measures_one_to_one_cosine_distance PUBLIC ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_dot_product STATIC
+dot_product.cc 
+dot_product.h )
+
+set(SOURCES
+distance_measures_one_to_one_binary_distance_measure_base
+distance_measures_one_to_one_common
+distance_measures_one_to_one_dot_product_avx1
+distance_measures_one_to_one_dot_product_avx2
+distance_measures_one_to_one_dot_product_sse4
+distance_measures_distance_measure_base
+utils_reduction
+utils_types
+utils_intrinsics_flags
+)
+
+target_link_libraries(distance_measures_one_to_one_dot_product PUBLIC ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_dot_product_impl SHARED
+dot_product_impl.inc)
+
+set(SOURCES
+data_format_datapoint
+)
+
+target_link_libraries(distance_measures_one_to_one_dot_product_impl INTERFACE ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_dot_product_avx1 STATIC 
+dot_product_avx1.cc 
+dot_product_avx1.h )
+
+set(SOURCES
+distance_measures_one_to_one_dot_product_impl
+data_format_datapoint
+utils_internal_avx_funcs
+utils_intrinsics_attributes
+utils_intrinsics_avx1
+)
+
+target_link_libraries(distance_measures_one_to_one_dot_product_avx1 PUBLIC ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_dot_product_avx2 STATIC
+dot_product_avx2.cc 
+dot_product_avx2.h )
+
+set(SOURCES
+distance_measures_one_to_one_dot_product_impl
+data_format_datapoint
+utils_internal_avx2_funcs
+utils_intrinsics_attributes
+utils_intrinsics_avx2
+)
+
+target_link_libraries(distance_measures_one_to_one_dot_product_avx2 PUBLIC ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_dot_product_sse4 STATIC 
+dot_product_sse4.cc 
+dot_product_sse4.h )
+
+set(SOURCES
+data_format_datapoint
+utils_intrinsics_attributes
+utils_intrinsics_sse4
+)
+
+target_link_libraries(distance_measures_one_to_one_dot_product_sse4 PUBLIC ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_hamming_distance STATIC 
+hamming_distance.cc 
+hamming_distance.h )
+
+set(SOURCES
+distance_measures_one_to_one_binary_distance_measure_base
+distance_measures_one_to_one_common
+distance_measures_distance_measure_base
+utils_reduction
+utils_types
+)
+
+target_link_libraries(distance_measures_one_to_one_hamming_distance PUBLIC ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_jaccard_distance SHARED 
+jaccard_distance.cc 
+jaccard_distance.h )
+
+set(SOURCES
+distance_measures_one_to_one_binary_distance_measure_base
+distance_measures_one_to_one_common
+distance_measures_distance_measure_base
+utils_reduction
+utils_types
+
+absl::bits
+)
+
+target_link_libraries(distance_measures_one_to_one_jaccard_distance PUBLIC ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_l1_distance STATIC 
+l1_distance.cc 
+l1_distance.h )
+
+set(SOURCES
+distance_measures_one_to_one_common
+distance_measures_one_to_one_l1_distance_sse4
+distance_measures_distance_measure_base
+utils_reduction
+utils_types
+utils_intrinsics_flags
+)
+
+target_link_libraries(distance_measures_one_to_one_l1_distance PUBLIC ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_l1_distance_sse4 STATIC 
+l1_distance_sse4.cc 
+l1_distance_sse4.h )
+
+set(SOURCES
+data_format_datapoint
+utils_intrinsics_attributes
+utils_intrinsics_sse4
+)
+
+target_link_libraries(distance_measures_one_to_one_l1_distance_sse4 PUBLIC ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_l2_distance STATIC 
+l2_distance.cc 
+l2_distance.h )
+
+set(SOURCES
+distance_measures_one_to_one_common
+distance_measures_one_to_one_l2_distance_avx1
+distance_measures_one_to_one_l2_distance_sse4
+distance_measures_distance_measure_base
+utils_reduction
+utils_types
+utils_intrinsics_flags
+)
+
+target_link_libraries(distance_measures_one_to_one_l2_distance PUBLIC ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_l2_distance_avx1 STATIC 
+l2_distance_avx1.cc 
+l2_distance_avx1.h )
+
+set(SOURCES
+data_format_datapoint
+utils_intrinsics_attributes
+utils_intrinsics_avx1
+)
+
+target_link_libraries(distance_measures_one_to_one_l2_distance_avx1 PUBLIC ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_l2_distance_sse4 STATIC 
+l2_distance_sse4.cc 
+l2_distance_sse4.h )
+
+set(SOURCES
+data_format_datapoint
+utils_intrinsics_attributes
+utils_intrinsics_sse4
+)
+
+target_link_libraries(distance_measures_one_to_one_l2_distance_sse4 PUBLIC ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_limited_inner_product STATIC 
+limited_inner_product.cc 
+limited_inner_product.h )
+
+set(SOURCES
+distance_measures_one_to_one_common
+distance_measures_one_to_one_dot_product
+distance_measures_one_to_one_l2_distance
+distance_measures_distance_measure_base
+utils_types
+)
+
+target_link_libraries(distance_measures_one_to_one_limited_inner_product PUBLIC ${SOURCES})
+ 
+
+add_library(distance_measures_one_to_one_nonzero_intersect_distance STATIC 
+nonzero_intersect_distance.cc 
+nonzero_intersect_distance.h )
+
+set(SOURCES
+distance_measures_one_to_one_common
+distance_measures_one_to_one_dot_product
+data_format_datapoint
+distance_measures_distance_measure_base
+oss_wrappers_scann_aligned_malloc
+oss_wrappers_scann_down_cast
+oss_wrappers_tf_dependency
+utils_reduction
+
+absl::base
+absl::flags
+)
+
+target_link_libraries(distance_measures_one_to_one_nonzero_intersect_distance PUBLIC ${SOURCES})

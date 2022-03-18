@@ -1,0 +1,50 @@
+add_library(brute_force_brute_force SHARED brute_force.cc brute_force.h)
+
+set(SOURCES
+base_restrict_allowlist
+base_search_parameters
+base_single_machine_base
+data_format_datapoint
+data_format_dataset
+distance_measures
+distance_measures/many_to_many
+distance_measures/one_to_many
+oss_wrappers_scann_aligned_malloc
+oss_wrappers_scann_down_cast
+oss_wrappers_tf_dependency
+utils_common
+utils_fast_top_neighbors
+utils_top_n_amortized_constant
+utils_types
+utils_intrinsics_sse4
+
+absl::base
+absl::flags
+absl::synchronization
+)
+
+target_link_libraries(brute_force_brute_force PUBLIC ${SOURCES})
+
+
+add_library(brute_force_scalar_quantized_brute_force SHARED scalar_quantized_brute_force.cc scalar_quantized_brute_force.h)
+
+set(SOURCES
+base_restrict_allowlist
+base_search_parameters
+base_single_machine_base
+data_format_datapoint
+data_format_dataset
+distance_measures
+distance_measures_one_to_many
+oss_wrappers_scann_status
+oss_wrappers_tf_dependency
+tree_x_hybrid_leaf_searcher_optional_parameter_creator
+utils_scalar_quantization_helpers
+utils_top_n_amortized_constant
+utils_types
+utils_fixed_point_pre_quantized_fixed_point
+
+absl::memory
+)
+
+target_link_libraries(brute_force_scalar_quantized_brute_force PUBLIC ${SOURCES})

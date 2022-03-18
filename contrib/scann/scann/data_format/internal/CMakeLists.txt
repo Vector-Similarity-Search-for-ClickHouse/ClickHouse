@@ -1,0 +1,14 @@
+add_library(data_format_internal_short_string_optimized_string SHARED short_string_optimized_string.h)
+
+set(SOURCES
+oss_wrappers_scann_down_cast
+oss_wrappers_scann_malloc_extension
+oss_wrappers_tf_dependency
+utils_types
+
+absl::base
+absl::flags
+absl::optional
+)
+
+target_link_libraries(data_format_internal_short_string_optimized_string PUBLIC ${SOURCES})

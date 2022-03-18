@@ -1,0 +1,162 @@
+add_library(hashes_asymmetric_hashing2_training_options_base SHARED 
+training_options_base.cc 
+training_options_base.h)
+
+set(SOURCES
+data_format_dataset
+distance_measures
+oss_wrappers_scann_threadpool
+projection_chunking_projection
+proto_hash_cc_proto
+utils_types
+)
+
+target_link_libraries(hashes_asymmetric_hashing2_training_options_base PUBLIC ${SOURCES})
+ 
+
+add_library(hashes_asymmetric_hashing2_training_options SHARED training_options.cc training_options.h )
+
+set(SOURCES
+hashes_asymmetric_hashing2_training_options_base
+data_format_dataset
+distance_measures
+oss_wrappers_scann_threadpool
+projection_chunking_projection
+projection_projection_factory
+proto_hash_cc_proto
+proto_projection_cc_proto
+utils_types
+)
+
+target_link_libraries(hashes_asymmetric_hashing2_training_options PUBLIC ${SOURCES})
+ 
+
+add_library(hashes_asymmetric_hashing2_training_model SHARED training_model.cc training_model.h )
+
+set(SOURCES
+data_format_datapoint
+data_format_dataset
+proto_centers_cc_proto
+proto_hash_cc_proto
+utils_types
+)
+
+target_link_libraries(hashes_asymmetric_hashing2_training_model PUBLIC ${SOURCES})
+ 
+
+add_library(hashes_asymmetric_hashing2_training SHARED training.h )
+
+set(SOURCES
+hashes_asymmetric_hashing2_training_model
+hashes_asymmetric_hashing2_training_options
+data_format_dataset
+hashes_internal_asymmetric_hashing_impl
+hashes_internal_stacked_quantizers
+oss_wrappers_scann_aligned_malloc
+oss_wrappers_scann_down_cast
+oss_wrappers_scann_threadpool
+oss_wrappers_tf_dependency
+utils_types
+
+absl::base
+absl::flags
+)
+
+target_link_libraries(hashes_asymmetric_hashing2_training INTERFACE ${SOURCES})
+ 
+
+add_library(hashes_asymmetric_hashing2_indexing SHARED indexing.cc indexing.h )
+
+set(SOURCES
+hashes_asymmetric_hashing2_training_model
+data_format_datapoint
+distance_measures
+distance_measures_one_to_one_dot_product
+distance_measures_one_to_one_l1_distance
+distance_measures_one_to_one_l2_distance
+hashes_internal_asymmetric_hashing_impl
+hashes_internal_stacked_quantizers
+oss_wrappers_scann_serialize
+oss_wrappers_tf_dependency
+projection_chunking_projection
+proto_hash_cc_proto
+utils_common
+utils_reduction
+utils_types
+utils_util_functions
+
+absl::core_headers
+)
+
+target_link_libraries(hashes_asymmetric_hashing2_indexing PUBLIC ${SOURCES})
+ 
+
+add_library(hashes_asymmetric_hashing2_querying SHARED querying.cc querying.h )
+
+set(SOURCES
+hashes_asymmetric_hashing2_training
+hashes_asymmetric_hashing2_training_options
+base_restrict_allowlist
+base_search_parameters
+data_format_datapoint
+data_format_dataset
+distance_measures
+hashes_internal_asymmetric_hashing_impl
+hashes_internal_asymmetric_hashing_lut16
+hashes_internal_asymmetric_hashing_postprocess
+projection_chunking_projection
+proto_hash_cc_proto
+utils_common
+utils_top_n_amortized_constant
+utils_types
+utils_util_functions
+utils_intrinsics_flags
+
+absl::flags
+)
+
+target_link_libraries(hashes_asymmetric_hashing2_querying PUBLIC ${SOURCES})
+ 
+
+add_library(hashes_asymmetric_hashing2_searcher SHARED searcher.cc searcher.h )
+
+set(SOURCES
+hashes_asymmetric_hashing2_indexing
+hashes_asymmetric_hashing2_querying
+hashes_asymmetric_hashing2_serialization
+hashes_asymmetric_hashing2_training
+base_search_parameters
+base_single_machine_base
+data_format_datapoint
+data_format_dataset
+distance_measures
+hashes_internal_asymmetric_hashing_postprocess
+oss_wrappers_scann_aligned_malloc
+oss_wrappers_scann_down_cast
+oss_wrappers_scann_serialize
+oss_wrappers_tf_dependency
+proto_hash_cc_proto
+tree_x_hybrid_leaf_searcher_optional_parameter_creator
+utils_datapoint_utils
+utils_top_n_amortized_constant
+utils_types
+utils_util_functions
+
+absl::base
+absl::flags
+)
+
+target_link_libraries(hashes_asymmetric_hashing2_searcher PUBLIC ${SOURCES})
+ 
+
+add_library(hashes_asymmetric_hashing2_serialization SHARED 
+serialization.h )
+
+set(SOURCES
+data_format_datapoint
+data_format_dataset
+proto_centers_cc_proto
+proto_hash_cc_proto
+)
+
+target_link_libraries(hashes_asymmetric_hashing2_serialization INTERFACE ${SOURCES})

@@ -1,0 +1,79 @@
+add_library(distance_measure_many_to_many_many_to_many SHARED
+many_to_many_double_results.cc
+many_to_many_double_top1.cc
+many_to_many_float_results.cc
+many_to_many_float_top1.cc
+
+many_to_many.h
+many_to_many_templates.h
+
+many_to_many_impl.inc)
+
+set(SOURCES
+distance_measure_many_to_many_fp8_transposed
+distance_measure_many_to_many_many_to_many_common
+distance_measure_many_to_many_many_to_many_flags
+data_format_datapoint
+data_format_dataset
+distance_measures
+distance_measures_one_to_many
+distance_measures_one_to_one_dot_product
+oss_wrappers_scann_aligned_malloc
+oss_wrappers_scann_down_cast
+oss_wrappers_tf_dependency
+utils_fast_top_neighbors
+utils_types
+utils_intrinsics_horizontal_sum
+utils_intrinsics_simd
+
+absl::base
+absl::flags
+)
+
+target_link_libraries(distance_measure_many_to_many_many_to_many PUBLIC ${SOURCES})
+
+
+add_library(distance_measure_many_to_many_many_to_many_flags SHARED many_to_many_flags.cc many_to_many_flags.h)
+
+set(SOURCES
+absl::flags
+)
+
+target_link_libraries(distance_measure_many_to_many_many_to_many_flags PUBLIC ${SOURCES})
+
+
+
+add_library(distance_measure_many_to_many_many_to_many_common SHARED many_to_many_common.h )
+
+set(SOURCES
+data_format_datapoint
+data_format_dataset
+distance_measures
+oss_wrappers_scann_aligned_malloc
+oss_wrappers_scann_down_cast
+oss_wrappers_scann_threadpool
+oss_wrappers_tf_dependency
+utils_common
+utils_fast_top_neighbors
+utils_types
+utils_intrinsics_simd
+
+absl::base
+absl::flags
+absl::synchronization
+)
+
+target_link_libraries(distance_measure_many_to_many_many_to_many_common INTERFACE ${SOURCES})
+
+
+
+add_library(distance_measure_many_to_many_fp8_transposed SHARED fp8_transposed.cc fp8_transposed.h)
+
+set(SOURCES
+data_format_dataset
+utils_types
+utils_intrinsics_flags
+)
+
+target_link_libraries(distance_measure_many_to_many_fp8_transposed PUBLIC ${SOURCES})
+

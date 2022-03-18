@@ -1,0 +1,19 @@
+add_library(distance_measures_one_to_many_one_to_many SHARED one_to_many.cc one_to_many.h one_to_many_impl.inc)
+
+set(SOURCES
+data_format_datapoint
+data_format_dataset
+distance_measures
+oss_wrappers_tf_dependency
+utils_common
+utils_types
+utils_internal_avx2_funcs
+utils_internal_avx_funcs
+utils_intrinsics_horizontal_sum
+utils_intrinsics_simd
+
+absl::core_headers
+absl::synchronization
+)
+
+target_link_libraries(distance_measures_one_to_many_one_to_many PUBLIC ${SOURCES})

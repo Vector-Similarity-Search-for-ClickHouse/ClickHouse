@@ -1,0 +1,212 @@
+add_library(hashes_internal_asymmetric_hashing_impl_omit_frame_pointer SHARED 
+asymmetric_hashing_impl_omit_frame_pointer.cc 
+asymmetric_hashing_impl.h )
+
+set(SOURCES
+hashes_internal_asymmetric_hashing_postprocess
+base_restrict_allowlist
+data_format_datapoint
+data_format_dataset
+hashes_asymmetric_hashing2_training_options_base
+oss_wrappers_scann_aligned_malloc
+oss_wrappers_scann_down_cast
+oss_wrappers_tf_dependency
+utils_common
+utils_datapoint_utils
+utils_top_n_amortized_constant
+utils_types
+
+absl::base
+absl::flags
+)
+
+target_link_libraries(hashes_internal_asymmetric_hashing_impl_omit_frame_pointer PUBLIC ${SOURCES})
+ 
+
+add_library(hashes_internal_asymmetric_hashing_impl SHARED 
+asymmetric_hashing_impl.cc 
+asymmetric_hashing_impl.h )
+
+set(SOURCES
+hashes_internalasymmetric_hashing_impl_omit_frame_pointer
+hashes_internal_asymmetric_hashing_postprocess
+base_restrict_allowlist
+data_format_datapoint
+data_format_dataset
+distance_measures_one_to_many
+hashes_asymmetric_hashing2_training_options_base
+oss_wrappers_scann_aligned_malloc
+oss_wrappers_scann_down_cast
+oss_wrappers_scann_random
+oss_wrappers_scann_status
+oss_wrappers_tf_dependency
+projection_chunking_projection
+utils_common
+utils_datapoint_utils
+utils_gmm_utils
+utils_noise_shaping_utils
+utils_top_n_amortized_constant
+utils_types
+
+absl::base
+absl::flags
+absl::random_random
+absl::random_distributions
+)
+
+target_link_libraries(hashes_internal_asymmetric_hashing_impl PUBLIC ${SOURCES})
+ 
+
+add_library(hashes_internal_lut16_sse4 SHARED 
+lut16_sse4.h
+lut16_sse4.inc)
+
+set(SOURCES
+hashes_internal_lut16_args
+oss_wrappers_scann_bits
+oss_wrappers_tf_dependency
+utils_bits
+utils_common
+utils_types
+utils_intrinsics_attributes
+utils_intrinsics_sse4
+)
+
+target_link_libraries(hashes_internal_lut16_sse4 PUBLIC ${SOURCES})
+ 
+
+add_library(hashes_internal_lut16_avx2 SHARED 
+lut16_avx2.h
+lut16_avx2.inc)
+
+set(SOURCES
+hashes_internal_lut16_args
+oss_wrappers_scann_bits
+oss_wrappers_tf_dependency
+utils_bits
+utils_common
+utils_types
+utils_intrinsics_attributes
+utils_intrinsics_avx2
+)
+
+target_link_libraries(hashes_internal_lut16_avx2 PUBLIC ${SOURCES})
+ 
+
+add_library(hashes_internal_lut16_avx512 SHARED 
+lut16_avx512_swizzle.cc
+lut16_avx512.h 
+lut16_avx512_swizzle.h
+lut16_avx512.inc)
+
+set(SOURCES
+hashes_internal_lut16_args
+oss_wrappers_scann_aligned_malloc
+oss_wrappers_scann_bits
+oss_wrappers_scann_down_cast
+oss_wrappers_tf_dependency
+utils_bits
+utils_common
+utils_types
+utils_intrinsics_attributes
+utils_intrinsics_avx512
+
+absl::base
+absl::flags
+)
+
+target_link_libraries(hashes_internal_lut16_avx512 PUBLIC ${SOURCES})
+ 
+
+add_library(hashes_internal_write_distances_to_topn SHARED 
+write_distances_to_topn.cc 
+write_distances_to_topn.h )
+
+set(SOURCES
+hashes_internal_asymmetric_hashing_postprocess
+base_restrict_allowlist
+utils_top_n_amortized_constant
+utils_types
+utils_intrinsics_sse4
+)
+
+target_link_libraries(hashes_internal_write_distances_to_topn PUBLIC ${SOURCES})
+ 
+
+add_library(hashes_internal_asymmetric_hashing_lut16 SHARED asymmetric_hashing_lut16.h )
+
+set(SOURCES
+hashes_internal_asymmetric_hashing_postprocess
+hashes_internal_lut16_interface
+hashes_internal_write_distances_to_topn
+base_restrict_allowlist
+data_format_dataset
+utils_top_n_amortized_constant
+utils_types
+)
+
+target_link_libraries(hashes_internal_asymmetric_hashing_lut16 INTERFACE ${SOURCES})
+ 
+
+add_library(hashes_internal_asymmetric_hashing_postprocess SHARED asymmetric_hashing_postprocess.h )
+
+set(SOURCES
+oss_wrappers_scann_aligned_malloc
+oss_wrappers_scann_down_cast
+oss_wrappers_tf_dependency
+utils_types
+
+absl::base
+absl::flags
+)
+
+target_link_libraries(hashes_internal_asymmetric_hashing_postprocess INTERFACE ${SOURCES})
+ 
+
+add_library(hashes_internal_lut16_args SHARED lut16_args.h )
+
+set(SOURCES
+base_restrict_allowlist
+utils_fast_top_neighbors
+utils_types
+)
+
+target_link_libraries(hashes_internal_lut16_args INTERFACE ${SOURCES})
+ 
+
+add_library(hashes_internal_lut16_interface SHARED
+lut16_interface.cc lut16_interface.h )
+
+set(SOURCES
+hashes_internal_lut16_args
+hashes_internal_lut16_avx2
+hashes_internal_lut16_avx512
+hashes_internal_lut16_sse4
+utils_alignment
+utils_common
+utils_fast_top_neighbors
+utils_types
+utils_intrinsics_flags
+)
+
+target_link_libraries(hashes_internal_lut16_interface PUBLIC ${SOURCES})
+ 
+
+add_library(hashes_internal_stacked_quantizers SHARED stacked_quantizers.cc stacked_quantizers.h )
+
+set(SOURCES
+data_format_datapoint
+data_format_dataset
+distance_measures
+distance_measures_many_to_many
+distance_measures_one_to_many
+hashes_asymmetric_hashing2_training_options_base
+oss_wrappers_scann_threadpool
+utils_common
+utils_datapoint_utils
+utils_dataset_sampling
+utils_gmm_utils
+utils_types
+)
+
+target_link_libraries(hashes_internal_stacked_quantizers PUBLIC ${SOURCES})
