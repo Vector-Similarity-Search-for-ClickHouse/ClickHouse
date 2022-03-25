@@ -28,7 +28,7 @@
 #include "scann/hashes/hashing_base.h"
 #include "scann/metadata/metadata_getter.h"
 #include "scann/oss_wrappers/scann_down_cast.h"
-#include "scann/proto/scann.pb.h"
+#include "scann.pb.h"
 #include "scann/utils/reordering_helper.h"
 #include "scann/utils/types.h"
 #include "scann/utils/util_functions.h"

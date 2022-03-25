@@ -23,7 +23,7 @@
 
 #include "scann/data_format/datapoint.h"
 #include "scann/projection/projection_base.h"
-#include "scann/proto/projection.pb.h"
+#include "projection.pb.h"
 #include "scann/utils/types.h"
 
 namespace research_scann {

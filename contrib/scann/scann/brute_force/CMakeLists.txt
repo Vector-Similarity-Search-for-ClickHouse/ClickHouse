@@ -1,14 +1,16 @@
-add_library(brute_force_brute_force SHARED brute_force.cc brute_force.h)
+add_library(brute_force SHARED brute_force.cc brute_force.h)
 
 set(SOURCES
+#distance_measures_distance_measure_base
+
 base_restrict_allowlist
 base_search_parameters
 base_single_machine_base
 data_format_datapoint
 data_format_dataset
-distance_measures
-distance_measures/many_to_many
-distance_measures/one_to_many
+distance_measures_distance_measures
+distance_measures_many_to_many
+distance_measures_one_to_many
 oss_wrappers_scann_aligned_malloc
 oss_wrappers_scann_down_cast
 oss_wrappers_tf_dependency
@@ -23,7 +25,7 @@ absl::flags
 absl::synchronization
 )
 
-target_link_libraries(brute_force_brute_force PUBLIC ${SOURCES})
+target_link_libraries(brute_force PUBLIC ${SOURCES})
 
 
 add_library(brute_force_scalar_quantized_brute_force SHARED scalar_quantized_brute_force.cc scalar_quantized_brute_force.h)
@@ -34,7 +36,7 @@ base_search_parameters
 base_single_machine_base
 data_format_datapoint
 data_format_dataset
-distance_measures
+distance_measures_distance_measures
 distance_measures_one_to_many
 oss_wrappers_scann_status
 oss_wrappers_tf_dependency

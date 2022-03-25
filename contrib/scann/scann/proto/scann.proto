@@ -18,16 +18,16 @@ syntax = "proto2";
 
 package research_scann;
 
-import "scann/proto/brute_force.proto";
-import "scann/proto/crowding.proto";
-import "scann/proto/disjoint_restrict_token.proto";
-import "scann/proto/distance_measure.proto";
-import "scann/proto/exact_reordering.proto";
-import "scann/proto/hash.proto";
-import "scann/proto/input_output.proto";
-import "scann/proto/metadata.proto";
-import "scann/proto/partitioning.proto";
-import "scann/proto/restricts.proto";
+import "brute_force.proto";
+import "crowding.proto";
+import "disjoint_restrict_token.proto";
+import "distance_measure.proto";
+import "exact_reordering.proto";
+import "hash.proto";
+import "input_output.proto";
+import "metadata.proto";
+import "partitioning.proto";
+import "restricts.proto";
 
 message ScannConfig {
   extensions 1000 to max;

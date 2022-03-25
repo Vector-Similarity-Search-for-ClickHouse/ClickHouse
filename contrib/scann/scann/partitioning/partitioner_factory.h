@@ -21,10 +21,10 @@
 #include <memory>
 
 #include "scann/data_format/dataset.h"
-#include "scann/partitioning/partitioner.pb.h"
+#include "partitioner.pb.h"
 #include "scann/partitioning/partitioner_base.h"
 #include "scann/partitioning/partitioner_factory_base.h"
-#include "scann/proto/partitioning.pb.h"
+#include "partitioning.pb.h"
 #include "scann/trees/kmeans_tree/kmeans_tree.h"
 #include "scann/utils/types.h"
 #include "scann/utils/util_functions.h"

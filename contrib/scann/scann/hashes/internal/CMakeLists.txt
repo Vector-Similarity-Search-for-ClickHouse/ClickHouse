@@ -1,4 +1,4 @@
-add_library(hashes_internal_asymmetric_hashing_impl_omit_frame_pointer SHARED 
+add_library(hashes_internal_asymmetric_hashing_impl_omit_frame_pointer STATIC 
 asymmetric_hashing_impl_omit_frame_pointer.cc 
 asymmetric_hashing_impl.h )
 
@@ -28,7 +28,7 @@ asymmetric_hashing_impl.cc
 asymmetric_hashing_impl.h )
 
 set(SOURCES
-hashes_internalasymmetric_hashing_impl_omit_frame_pointer
+hashes_internal_asymmetric_hashing_impl_omit_frame_pointer
 hashes_internal_asymmetric_hashing_postprocess
 base_restrict_allowlist
 data_format_datapoint
@@ -59,7 +59,8 @@ target_link_libraries(hashes_internal_asymmetric_hashing_impl PUBLIC ${SOURCES})
 
 add_library(hashes_internal_lut16_sse4 SHARED 
 lut16_sse4.h
-lut16_sse4.inc)
+lut16_sse4.inc
+lut16_sse4.tpl.cc)
 
 set(SOURCES
 hashes_internal_lut16_args
@@ -77,7 +78,8 @@ target_link_libraries(hashes_internal_lut16_sse4 PUBLIC ${SOURCES})
 
 add_library(hashes_internal_lut16_avx2 SHARED 
 lut16_avx2.h
-lut16_avx2.inc)
+lut16_avx2.inc
+lut16_avx2.tpl.cc)
 
 set(SOURCES
 hashes_internal_lut16_args
@@ -97,7 +99,10 @@ add_library(hashes_internal_lut16_avx512 SHARED
 lut16_avx512_swizzle.cc
 lut16_avx512.h 
 lut16_avx512_swizzle.h
-lut16_avx512.inc)
+lut16_avx512.inc
+lut16_avx512_noprefetch.tpl.cc
+lut16_avx512_prefetch.tpl.cc
+lut16_avx512_smart.tpl.cc)
 
 set(SOURCES
 hashes_internal_lut16_args
@@ -133,7 +138,7 @@ utils_intrinsics_sse4
 target_link_libraries(hashes_internal_write_distances_to_topn PUBLIC ${SOURCES})
  
 
-add_library(hashes_internal_asymmetric_hashing_lut16 SHARED asymmetric_hashing_lut16.h )
+add_library(hashes_internal_asymmetric_hashing_lut16 INTERFACE)
 
 set(SOURCES
 hashes_internal_asymmetric_hashing_postprocess
@@ -148,7 +153,7 @@ utils_types
 target_link_libraries(hashes_internal_asymmetric_hashing_lut16 INTERFACE ${SOURCES})
  
 
-add_library(hashes_internal_asymmetric_hashing_postprocess SHARED asymmetric_hashing_postprocess.h )
+add_library(hashes_internal_asymmetric_hashing_postprocess INTERFACE)
 
 set(SOURCES
 oss_wrappers_scann_aligned_malloc
@@ -163,7 +168,7 @@ absl::flags
 target_link_libraries(hashes_internal_asymmetric_hashing_postprocess INTERFACE ${SOURCES})
  
 
-add_library(hashes_internal_lut16_args SHARED lut16_args.h )
+add_library(hashes_internal_lut16_args INTERFACE)
 
 set(SOURCES
 base_restrict_allowlist
@@ -197,7 +202,7 @@ add_library(hashes_internal_stacked_quantizers SHARED stacked_quantizers.cc stac
 set(SOURCES
 data_format_datapoint
 data_format_dataset
-distance_measures
+distance_measures_distance_measures
 distance_measures_many_to_many
 distance_measures_one_to_many
 hashes_asymmetric_hashing2_training_options_base

@@ -28,7 +28,7 @@
 #include "scann/hashes/asymmetric_hashing2/searcher.h"
 #include "scann/partitioning/kmeans_tree_like_partitioner.h"
 #include "scann/partitioning/kmeans_tree_partitioner.h"
-#include "scann/proto/hash.pb.h"
+#include "hash.pb.h"
 #include "scann/trees/kmeans_tree/kmeans_tree.h"
 #include "scann/utils/types.h"
 

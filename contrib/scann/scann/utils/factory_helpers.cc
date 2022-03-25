@@ -17,8 +17,8 @@
 #include <cstdint>
 
 #include "scann/distance_measures/distance_measure_factory.h"
-#include "scann/proto/distance_measure.pb.h"
-#include "scann/proto/exact_reordering.pb.h"
+#include "distance_measure.pb.h"
+#include "exact_reordering.pb.h"
 #include "scann/utils/types.h"
 
 namespace research_scann {

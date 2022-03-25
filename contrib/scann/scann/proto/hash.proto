@@ -16,8 +16,8 @@ syntax = "proto2";
 
 package research_scann;
 
-import "scann/proto/distance_measure.proto";
-import "scann/proto/projection.proto";
+import "distance_measure.proto";
+import "projection.proto";
 
 message HashConfig {
   optional int32 num_bits = 1;

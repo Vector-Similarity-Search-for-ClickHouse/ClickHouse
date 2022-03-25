@@ -22,7 +22,7 @@
 #include <type_traits>
 
 #include "absl/base/thread_annotations.h"
-#include "scann/proto/input_output.pb.h"
+#include "input_output.pb.h"
 #include "scann/utils/common.h"
 
 namespace research_scann {

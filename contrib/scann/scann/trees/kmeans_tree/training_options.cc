@@ -16,7 +16,7 @@
 
 #include "scann/trees/kmeans_tree/training_options.h"
 
-#include "scann/proto/partitioning.pb.h"
+#include "partitioning.pb.h"
 #include "scann/utils/gmm_utils.h"
 
 namespace research_scann {

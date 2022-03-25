@@ -19,8 +19,8 @@
 #include "scann/hashes/asymmetric_hashing2/training_model.h"
 #include "scann/oss_wrappers/scann_down_cast.h"
 #include "scann/projection/projection_factory.h"
-#include "scann/proto/distance_measure.pb.h"
-#include "scann/proto/exact_reordering.pb.h"
+#include "distance_measure.pb.h"
+#include "exact_reordering.pb.h"
 #include "scann/utils/reordering_helper.h"
 #include "scann/utils/types.h"
 

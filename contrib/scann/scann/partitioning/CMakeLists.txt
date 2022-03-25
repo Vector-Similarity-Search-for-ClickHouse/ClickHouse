@@ -2,7 +2,7 @@
 add_library(partitioning_partitioner_base SHARED partitioner_base.cc partitioner_base.h )
 
 set(SOURCES
-partitioning_partitioner_cc_proto
+cc_proto
 data_format_datapoint
 data_format_dataset
 oss_wrappers_scann_aligned_malloc
@@ -20,12 +20,12 @@ absl::flags
 target_link_libraries(partitioning_partitioner_base PUBLIC ${SOURCES})
  
 
-add_library(partitioning_kmeans_tree_like_partitioner SHARED kmeans_tree_like_partitioner.h )
+add_library(partitioning_kmeans_tree_like_partitioner INTERFACE)
 
 set(SOURCES
 partitioning_partitioner_base
 data_format_datapoint
-distance_measures
+distance_measures_distance_measures
 trees_kmeans_tree
 utils_types
 )
@@ -40,9 +40,8 @@ kmeans_tree_partitioner.h )
 
 set(SOURCES
 partitioning_kmeans_tree_like_partitioner
-partitioning_kmeans_tree_partitioner_cc_proto
+cc_proto
 partitioning_partitioner_base
-partitioning_partitioner_cc_proto
 base_search_parameters
 base_single_machine_base
 brute_force
@@ -55,9 +54,6 @@ hashes_asymmetric_hashing2_training_options
 oss_wrappers_scann_aligned_malloc
 oss_wrappers_scann_down_cast
 oss_wrappers_tf_dependency
-proto_distance_measure_cc_proto
-proto_hash_cc_proto
-proto_partitioning_cc_proto
 trees_kmeans_tree
 utils_common
 utils_datapoint_utils
@@ -75,12 +71,12 @@ absl::synchronization
 target_link_libraries(partitioning_kmeans_tree_partitioner PUBLIC ${SOURCES})
  
 
-add_library(partitioning_kmeans_tree_partitioner_utils SHARED kmeans_tree_partitioner_utils.h )
+add_library(partitioning_kmeans_tree_partitioner_utils INTERFACE)
 
 set(SOURCES
 partitioning_kmeans_tree_partitioner
 partitioning_partitioner_base
-distance_measures
+distance_measures_distance_measures
 oss_wrappers_tf_dependency
 
 absl::synchronization
@@ -113,12 +109,11 @@ partitioning_kmeans_tree_partitioner_utils
 partitioning_partitioner_base
 partitioning_projecting_decorator
 data_format_dataset
-distance_measures
+distance_measures_distance_measures
 oss_wrappers_tf_dependency
 projection_projection_base
 projection_projection_factory
-proto_distance_measure_cc_proto
-proto_partitioning_cc_proto
+cc_proto
 utils_types
 utils_util_functions
 
@@ -133,20 +128,17 @@ target_link_libraries(partitioning_partitioner_factory_base PUBLIC ${SOURCES})
 add_library(partitioning_partitioner_factory SHARED partitioner_factory.cc partitioner_factory.h )
 
 set(SOURCES
-partitioning_kmeans_tree_partitioner_cc_proto
 partitioning_kmeans_tree_partitioner_utils
 partitioning_partitioner_base
-partitioning_partitioner_cc_proto
 partitioning_partitioner_factory_base
 partitioning_projecting_decorator
 data_format_dataset
-distance_measures
+distance_measures_distance_measures
 oss_wrappers_scann_random
 oss_wrappers_tf_dependency
 projection_projection_base
 projection_projection_factory
-proto_distance_measure_cc_proto
-proto_partitioning_cc_proto
+cc_proto
 trees_kmeans_tree
 utils_types
 utils_util_functions
@@ -160,32 +152,3 @@ absl::time
 )
 
 target_link_libraries(partitioning_partitioner_factory PUBLIC ${SOURCES})
-
-
-#-------------------------------------------------------------------------------
-
-set(PROTO_SOURCES
-partitioner.proto
-linear_projection_tree.proto
-)
-
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_SOURCES})
-
-add_library(partitioning_partitioner_cc_proto SHARED ${PROTO_SRCS} ${PROTO_HDRS})
-target_link_libraries(partitioning_partitioner_cc_proto PUBLIC 
-partitioning_kmeans_tree_partitioner_cc_proto
-)
-
-
-set(PROTO_SOURCES
-kmeans_tree_partitioner.proto
-../trees/kmeans_tree/kmeans_tree.proto
-)
-
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_SOURCES})
-
-add_library(partitioning_kmeans_tree_partitioner_cc_proto SHARED ${PROTO_SRCS} ${PROTO_HDRS})
-target_link_libraries(partitioning_kmeans_tree_partitioner_cc_proto PUBLIC
-partitioning_partitioner_cc_proto
-proto_partitioning_cc_proto
-)

@@ -21,7 +21,7 @@
 #include <limits>
 #include <type_traits>
 
-#include "scann/data_format/features.pb.h"
+#include "features.pb.h"
 #include "scann/data_format/gfv_properties.h"
 #include "scann/utils/common.h"
 #include "scann/utils/types.h"

@@ -20,7 +20,7 @@
 #include "scann/projection/chunking_projection.h"
 #include "scann/projection/identity_projection.h"
 #include "scann/projection/random_orthogonal_projection.h"
-#include "scann/proto/projection.pb.h"
+#include "projection.pb.h"
 #include "scann/utils/types.h"
 
 namespace research_scann {

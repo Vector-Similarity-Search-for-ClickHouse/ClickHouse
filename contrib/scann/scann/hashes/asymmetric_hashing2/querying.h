@@ -36,7 +36,7 @@
 #include "scann/hashes/internal/asymmetric_hashing_lut16.h"
 #include "scann/hashes/internal/asymmetric_hashing_postprocess.h"
 #include "scann/projection/chunking_projection.h"
-#include "scann/proto/hash.pb.h"
+#include "hash.pb.h"
 #include "scann/utils/top_n_amortized_constant.h"
 #include "scann/utils/types.h"
 #include "scann/utils/util_functions.h"

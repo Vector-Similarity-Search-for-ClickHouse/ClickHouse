@@ -28,7 +28,7 @@
 #include "scann/hashes/asymmetric_hashing2/indexing.h"
 #include "scann/hashes/asymmetric_hashing2/querying.h"
 #include "scann/hashes/asymmetric_hashing2/training.h"
-#include "scann/proto/hash.pb.h"
+#include "hash.pb.h"
 #include "scann/tree_x_hybrid/leaf_searcher_optional_parameter_creator.h"
 #include "scann/utils/top_n_amortized_constant.h"
 #include "scann/utils/types.h"

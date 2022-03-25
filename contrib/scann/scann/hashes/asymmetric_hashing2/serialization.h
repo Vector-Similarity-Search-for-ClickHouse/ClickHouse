@@ -17,8 +17,8 @@
 
 #include "scann/data_format/datapoint.h"
 #include "scann/data_format/dataset.h"
-#include "scann/proto/centers.pb.h"
-#include "scann/proto/hash.pb.h"
+#include "centers.pb.h"
+#include "hash.pb.h"
 
 namespace research_scann {
 namespace asymmetric_hashing2 {

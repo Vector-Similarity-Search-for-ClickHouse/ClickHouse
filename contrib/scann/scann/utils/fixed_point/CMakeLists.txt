@@ -1,4 +1,4 @@
-add_library(utils_fixed_point_pre_quantized_fixed_point SHARED pre_quantized_fixed_point.h )
+add_library(utils_fixed_point_pre_quantized_fixed_point INTERFACE)
 
 set(SOURCES
 data_format_dataset

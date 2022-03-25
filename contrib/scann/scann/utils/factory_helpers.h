@@ -20,7 +20,7 @@
 #include <cstdint>
 
 #include "scann/distance_measures/distance_measures.h"
-#include "scann/proto/scann.pb.h"
+#include "scann.pb.h"
 
 namespace research_scann {
 

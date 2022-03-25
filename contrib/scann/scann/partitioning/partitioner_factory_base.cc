@@ -21,7 +21,7 @@
 #include "absl/time/clock.h"
 #include "absl/time/time.h"
 #include "scann/distance_measures/distance_measure_factory.h"
-#include "scann/proto/distance_measure.pb.h"
+#include "distance_measure.pb.h"
 #include "tensorflow/core/lib/core/errors.h"
 
 namespace research_scann {

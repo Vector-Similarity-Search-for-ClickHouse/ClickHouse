@@ -19,9 +19,9 @@
 
 #include <cstdint>
 
-#include "scann/data_format/features.pb.h"
+#include "features.pb.h"
 #include "scann/data_format/gfv_conversion.h"
-#include "scann/proto/hashed.pb.h"
+#include "hashed.pb.h"
 #include "scann/utils/infinite_one_array.h"
 #include "scann/utils/types.h"
 

@@ -19,8 +19,8 @@ syntax = "proto2";
 package research_scann;
 
 import "google/protobuf/timestamp.proto";
-import "scann/coscann/v2_restricts.proto";
-import "scann/proto/restricts.proto";
+import "v2_restricts.proto";
+import "restricts.proto";
 
 option cc_enable_arenas = true;
 

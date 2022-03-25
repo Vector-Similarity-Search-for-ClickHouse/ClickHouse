@@ -23,7 +23,7 @@ set(SOURCES
 projection_identity_projection
 projection_projection_base
 data_format_datapoint
-proto_projection_cc_proto
+cc_proto
 utils_datapoint_utils
 utils_types
 
@@ -69,7 +69,7 @@ projection_chunking_projection
 projection_identity_projection
 projection_projection_base
 data_format_dataset
-proto_projection_cc_proto
+cc_proto
 utils_types
 )
 

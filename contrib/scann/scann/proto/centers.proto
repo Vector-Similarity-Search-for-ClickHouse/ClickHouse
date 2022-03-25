@@ -18,8 +18,8 @@ syntax = "proto2";
 
 package research_scann;
 
-import "scann/data_format/features.proto";
-import "scann/proto/hash.proto";
+import "features.proto";
+import "hash.proto";
 
 message CentersForAllSubspaces {
   repeated CentersForSubspace subspace_centers = 1;

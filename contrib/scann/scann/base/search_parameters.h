@@ -19,7 +19,7 @@
 #include <cstdint>
 
 #include "scann/base/restrict_allowlist.h"
-#include "scann/data_format/features.pb.h"
+#include "features.pb.h"
 #include "scann/oss_wrappers/scann_aligned_malloc.h"
 #include "scann/utils/types.h"
 #include "tensorflow/core/platform/prefetch.h"

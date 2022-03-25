@@ -16,7 +16,7 @@
 
 #include <cstdint>
 
-#include "scann/proto/projection.pb.h"
+#include "projection.pb.h"
 
 namespace research_scann {
 

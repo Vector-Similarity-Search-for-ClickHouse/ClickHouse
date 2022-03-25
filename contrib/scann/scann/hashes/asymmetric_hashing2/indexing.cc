@@ -25,7 +25,7 @@
 #include "scann/hashes/internal/asymmetric_hashing_impl.h"
 #include "scann/hashes/internal/stacked_quantizers.h"
 #include "scann/oss_wrappers/scann_serialize.h"
-#include "scann/proto/hash.pb.h"
+#include "hash.pb.h"
 #include "scann/utils/common.h"
 #include "scann/utils/reduction.h"
 #include "scann/utils/types.h"

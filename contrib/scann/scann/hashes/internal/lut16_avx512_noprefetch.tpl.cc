@@ -18,7 +18,15 @@
 namespace research_scann {
 namespace asymmetric_hashing_internal {
 
-template class LUT16Avx512<{BATCH_SIZE}, PrefetchStrategy::kOff>;
+template class LUT16Avx512<1, PrefetchStrategy::kOff>;
+template class LUT16Avx512<2, PrefetchStrategy::kOff>;
+template class LUT16Avx512<3, PrefetchStrategy::kOff>;
+template class LUT16Avx512<4, PrefetchStrategy::kOff>;
+template class LUT16Avx512<5, PrefetchStrategy::kOff>;
+template class LUT16Avx512<6, PrefetchStrategy::kOff>;
+template class LUT16Avx512<7, PrefetchStrategy::kOff>;
+template class LUT16Avx512<8, PrefetchStrategy::kOff>;
+template class LUT16Avx512<9, PrefetchStrategy::kOff>;
 
 }
 }  // namespace research_scann

@@ -23,7 +23,7 @@
 #include "absl/synchronization/mutex.h"
 #include "scann/base/single_machine_base.h"
 #include "scann/partitioning/kmeans_tree_like_partitioner.h"
-#include "scann/partitioning/partitioner.pb.h"
+#include "partitioner.pb.h"
 #include "scann/partitioning/partitioner_base.h"
 #include "scann/trees/kmeans_tree/kmeans_tree.h"
 #include "scann/trees/kmeans_tree/kmeans_tree_node.h"

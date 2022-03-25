@@ -22,8 +22,8 @@
 #include "absl/base/internal/sysinfo.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/node_hash_set.h"
-#include "scann/partitioning/partitioner.pb.h"
-#include "scann/proto/exact_reordering.pb.h"
+#include "partitioner.pb.h"
+#include "exact_reordering.pb.h"
 #include "scann/utils/types.h"
 #include "tensorflow/core/platform/cpu_info.h"
 

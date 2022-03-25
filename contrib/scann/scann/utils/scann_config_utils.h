@@ -18,11 +18,11 @@
 #include <cstdint>
 
 #include "scann/data_format/datapoint.h"
-#include "scann/data_format/features.pb.h"
+#include "features.pb.h"
 #include "scann/oss_wrappers/scann_status.h"
-#include "scann/proto/exact_reordering.pb.h"
-#include "scann/proto/input_output.pb.h"
-#include "scann/proto/scann.pb.h"
+#include "exact_reordering.pb.h"
+#include "input_output.pb.h"
+#include "scann.pb.h"
 #include "scann/utils/types.h"
 
 namespace research_scann {

@@ -1,4 +1,4 @@
-add_library(distance_measures_one_to_one_common SHARED common.h)
+add_library(distance_measures_one_to_one_common INTERFACE)
 
 set(SOURCES
 data_format_datapoint
@@ -60,8 +60,7 @@ utils_intrinsics_flags
 target_link_libraries(distance_measures_one_to_one_dot_product PUBLIC ${SOURCES})
  
 
-add_library(distance_measures_one_to_one_dot_product_impl SHARED
-dot_product_impl.inc)
+add_library(distance_measures_one_to_one_dot_product_impl INTERFACE)
 
 set(SOURCES
 data_format_datapoint
@@ -206,7 +205,8 @@ target_link_libraries(distance_measures_one_to_one_l2_distance_avx1 PUBLIC ${SOU
 
 add_library(distance_measures_one_to_one_l2_distance_sse4 STATIC 
 l2_distance_sse4.cc 
-l2_distance_sse4.h )
+l2_distance_sse4.h 
+)
 
 set(SOURCES
 data_format_datapoint

@@ -18,8 +18,8 @@
 #include <cstdint>
 
 #include "scann/data_format/dataset.h"
-#include "scann/proto/centers.pb.h"
-#include "scann/proto/hash.pb.h"
+#include "centers.pb.h"
+#include "hash.pb.h"
 #include "scann/utils/types.h"
 
 namespace research_scann {

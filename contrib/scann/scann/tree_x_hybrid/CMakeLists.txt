@@ -10,7 +10,7 @@ utils_types
 target_link_libraries(tree_x_hybrid_tree_x_params PUBLIC ${SOURCES})
  
 
-add_library(tree_x_hybrid_leaf_searcher_optional_parameter_creator SHARED leaf_searcher_optional_parameter_creator.h )
+add_library(tree_x_hybrid_leaf_searcher_optional_parameter_creator INTERFACE)
 
 set(SOURCES
 base_search_parameters
@@ -21,7 +21,7 @@ utils_types
 target_link_libraries(tree_x_hybrid_leaf_searcher_optional_parameter_creator INTERFACE ${SOURCES})
  
 
-add_library(tree_x_hybrid_tree_x_hybrid_smmd SHARED tree_x_hybrid_smmd.cc tree_x_hybrid_smmd.h )
+add_library(tree_x_hybrid_tree_x_hybrid_smmd SHARED tree_x_hybrid_smmd.cc tree_x_hybrid_smmd.h)
 
 set(SOURCES
 tree_x_hybrid_leaf_searcher_optional_parameter_creator
@@ -50,7 +50,7 @@ absl::flat_hash_set
 absl::node_hash_map
 absl::flags
 absl::memory
-absl:status
+absl::status
 absl::synchronization
 absl::time
 gtest_main
@@ -67,7 +67,7 @@ base_search_parameters
 base_single_machine_base
 data_format_datapoint
 data_format_dataset
-distance_measures
+distance_measures_distance_measures
 hashes_asymmetric_hashing2_indexing
 hashes_asymmetric_hashing2_querying
 hashes_asymmetric_hashing2_searcher
@@ -80,9 +80,7 @@ oss_wrappers_tf_dependency
 partitioning_kmeans_tree_like_partitioner
 partitioning_kmeans_tree_partitioner
 projection_projection_factory
-proto_centers_cc_proto
-proto_distance_measure_cc_proto
-proto_hash_cc_proto
+cc_proto
 tree_x_hybrid_internal_batching
 tree_x_hybrid_internal_utils
 trees_kmeans_tree

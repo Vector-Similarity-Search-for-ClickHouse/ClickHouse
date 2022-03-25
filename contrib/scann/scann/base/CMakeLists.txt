@@ -10,7 +10,7 @@ base_internal_single_machine_factory_impl
 brute_force
 brute_force_scalar_quantized_brute_force
 data_format_dataset
-distance_measures
+distance_measures_distance_measures
 oss_wrappers_scann_aligned_malloc
 oss_wrappers_scann_down_cast
 oss_wrappers_scann_threadpool
@@ -19,10 +19,7 @@ partitioning_kmeans_tree_like_partitioner
 partitioning_partitioner_factory
 partitioning_partitioner_factory_base
 partitioning_projecting_decorator
-proto_brute_force_cc_proto
-proto_distance_measure_cc_proto
-proto_exact_reordering_cc_proto
-proto_scann_cc_proto
+cc_proto
 tree_x_hybrid_tree_ah_hybrid_residual
 tree_x_hybrid_tree_x_hybrid_smmd
 utils_factory_helpers
@@ -48,8 +45,7 @@ oss_wrappers_scann_aligned_malloc
 oss_wrappers_scann_down_cast
 oss_wrappers_tf_dependency
 projection_projection_factory
-proto_distance_measure_cc_proto
-proto_exact_reordering_cc_proto
+cc_proto
 utils_factory_helpers
 utils_reordering_helper
 utils_types
@@ -66,8 +62,7 @@ set(SOURCES
 oss_wrappers_scann_aligned_malloc
 oss_wrappers_scann_down_cast
 oss_wrappers_tf_dependency
-partitioning_partitioner_cc_proto
-proto_centers_cc_proto
+cc_proto
 trees_kmeans_tree
 utils_input_data_utils
 utils_types
@@ -93,7 +88,7 @@ metadata_metadata_getter
 oss_wrappers_scann_aligned_malloc
 oss_wrappers_scann_down_cast
 oss_wrappers_tf_dependency
-proto_scann_cc_proto
+cc_proto
 utils_common
 utils_factory_helpers
 utils_reordering_helper
@@ -113,7 +108,7 @@ add_library(base_search_parameters SHARED search_parameters.cc search_parameters
 
 set(SOURCES
 base_restrict_allowlist
-data_format_features_cc_proto
+cc_proto
 oss_wrappers_scann_aligned_malloc
 oss_wrappers_tf_dependency
 utils_types

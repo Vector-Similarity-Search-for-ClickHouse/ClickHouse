@@ -23,7 +23,7 @@
 #include "scann/partitioning/projecting_decorator.h"
 #include "scann/projection/projection_base.h"
 #include "scann/projection/projection_factory.h"
-#include "scann/proto/partitioning.pb.h"
+#include "partitioning.pb.h"
 #include "scann/utils/types.h"
 #include "scann/utils/util_functions.h"
 

@@ -9,7 +9,7 @@ distance_measure_base.h )
 
 set(SOURCES
 data_format_datapoint
-proto_distance_measure_cc_proto
+cc_proto
 utils_types
 )
 
@@ -32,7 +32,7 @@ distance_measures_one_to_one_l1_distance
 distance_measures_one_to_one_l2_distance
 distance_measures_one_to_one_limited_inner_product
 distance_measures_one_to_one_nonzero_intersect_distance
-proto_distance_measure_cc_proto
+cc_proto
 utils_types
 )
 

@@ -22,7 +22,7 @@
 
 #include "scann/data_format/datapoint.h"
 #include "scann/data_format/dataset.h"
-#include "scann/proto/hashed.pb.h"
+#include "hashed.pb.h"
 #include "scann/utils/types.h"
 
 namespace research_scann {

@@ -15,7 +15,7 @@
 #include "scann/hashes/asymmetric_hashing2/training_options.h"
 
 #include "scann/projection/projection_factory.h"
-#include "scann/proto/projection.pb.h"
+#include "projection.pb.h"
 #include "scann/utils/types.h"
 
 namespace research_scann {

@@ -82,7 +82,7 @@ class RestrictAllowlist {
     allowlist_recycling_fn_ = std::move(f);
   }
 
-  DatapointIndex NumPointsWhitelisted() const;
+  DatapointIndex NumPointsWhitelisted() const { return num_points_; }
 
   DatapointIndex num_points() const { return num_points_; }
   DatapointIndex size() const { return num_points_; }

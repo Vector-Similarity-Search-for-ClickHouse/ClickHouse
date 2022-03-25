@@ -18,7 +18,7 @@ syntax = "proto2";
 
 package research_scann;
 
-import "scann/proto/distance_measure.proto";
+import "distance_measure.proto";
 
 message ExactReordering {
   optional int32 approx_num_neighbors = 1 [default = 2147483647];

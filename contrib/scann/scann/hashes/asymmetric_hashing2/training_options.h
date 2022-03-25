@@ -26,7 +26,7 @@
 #include "scann/hashes/asymmetric_hashing2/training_options_base.h"
 #include "scann/oss_wrappers/scann_threadpool.h"
 #include "scann/projection/chunking_projection.h"
-#include "scann/proto/hash.pb.h"
+#include "hash.pb.h"
 #include "scann/utils/types.h"
 
 namespace research_scann {

@@ -16,8 +16,8 @@ syntax = "proto2";
 
 package research_scann;
 
-import "scann/partitioning/kmeans_tree_partitioner.proto";
-import "scann/partitioning/linear_projection_tree.proto";
+import "kmeans_tree_partitioner.proto";
+import "linear_projection_tree.proto";
 
 message SerializedPartitioner {
   optional int32 n_tokens = 1;

@@ -22,7 +22,7 @@
 #include "scann/hashes/asymmetric_hashing2/training.h"
 #include "scann/hashes/asymmetric_hashing2/training_options.h"
 #include "scann/projection/projection_factory.h"
-#include "scann/proto/distance_measure.pb.h"
+#include "distance_measure.pb.h"
 #include "scann/utils/types.h"
 
 namespace research_scann {

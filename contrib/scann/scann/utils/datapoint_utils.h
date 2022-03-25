@@ -22,7 +22,7 @@
 #include "scann/data_format/datapoint.h"
 #include "scann/distance_measures/distance_measures.h"
 #include "scann/oss_wrappers/scann_bits.h"
-#include "scann/proto/input_output.pb.h"
+#include "input_output.pb.h"
 #include "scann/utils/intrinsics/flags.h"
 #include "scann/utils/reduction.h"
 #include "scann/utils/types.h"

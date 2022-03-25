@@ -1,4 +1,4 @@
-add_library(tree_x_hybrid_internal_utils SHARED utils.h )
+add_library(tree_x_hybrid_internal_utils INTERFACE)
 
 set(SOURCES
 base_restrict_allowlist
@@ -17,7 +17,7 @@ absl::flags
 target_link_libraries(tree_x_hybrid_internal_utils INTERFACE ${SOURCES})
  
 
-add_library(tree_x_hybrid_internal_batching SHARED batching.h )
+add_library(tree_x_hybrid_internal_batching INTERFACE)
 
 set(SOURCES
 base_search_parameters

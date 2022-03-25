@@ -16,7 +16,7 @@ syntax = "proto2";
 
 package research_scann;
 
-import "scann/proto/incremental_updates.proto";
+import "incremental_updates.proto";
 
 message InputOutputConfig {
   enum InMemoryTypes {

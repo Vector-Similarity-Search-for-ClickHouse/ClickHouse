@@ -19,8 +19,8 @@
 #include <memory>
 #include <vector>
 
-#include "scann/partitioning/partitioner.pb.h"
-#include "scann/proto/centers.pb.h"
+#include "partitioner.pb.h"
+#include "centers.pb.h"
 #include "scann/trees/kmeans_tree/kmeans_tree.h"
 #include "scann/utils/fixed_point/pre_quantized_fixed_point.h"
 #include "scann/utils/types.h"

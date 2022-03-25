@@ -1,4 +1,4 @@
-add_library(base_internal_single_machine_factory_impl SHARED single_machine_factory_impl.h)
+add_library(base_internal_single_machine_factory_impl INTERFACE)
 
 set(SOURCES 
 base_reordering_helper_factory
@@ -6,8 +6,7 @@ base_single_machine_base
 base_single_machine_factory_options
 data_format_dataset
 oss_wrappers_tf_dependency
-proto_tf_dependency
-proto_scann_cc_proto
+cc_proto
 utils_factory_helpers
 utils_scann_config_utils
 )

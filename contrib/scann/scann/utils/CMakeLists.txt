@@ -15,7 +15,7 @@ add_library(utils_types SHARED types.cc types.h )
 
 set(SOURCES
 utils_common
-proto_input_output_cc_proto
+cc_proto
 
 absl::core_headers
 absl::flags
@@ -24,15 +24,15 @@ absl::flags
 target_link_libraries(utils_types PUBLIC ${SOURCES})
  
 
-add_library(utils_datapoint_utils SHARED datapoint_utils.h )
+add_library(utils_datapoint_utils INTERFACE)
 
 set(SOURCES
 utils_reduction
 utils_types
 data_format_datapoint
-distance_measures
+distance_measures_distance_measures
 oss_wrappers_scann_bits
-proto_input_output_cc_proto
+cc_proto
 utils_intrinsics_flags
 )
 
@@ -76,7 +76,7 @@ base_restrict_allowlist
 data_format_datapoint
 data_format_dataset
 data_format_docid_collection
-distance_measures
+distance_measures_distance_measures
 distance_measures_many_to_many
 distance_measures_one_to_many
 distance_measures_one_to_one_l2_distance
@@ -86,8 +86,7 @@ oss_wrappers_scann_random
 oss_wrappers_scann_status
 oss_wrappers_scann_threadpool
 oss_wrappers_tf_dependency
-partitioning_partitioner_cc_proto
-proto_partitioning_cc_proto
+cc_proto
 
 absl::base
 absl::endian
@@ -102,7 +101,7 @@ absl::time
 target_link_libraries(utils_gmm_utils PUBLIC ${SOURCES})
  
 
-add_library(utils_infinite_one_array SHARED infinite_one_array.h )
+add_library(utils_infinite_one_array INTERFACE)
 
 set(SOURCES
 utils_types
@@ -111,7 +110,7 @@ utils_types
 target_link_libraries(utils_infinite_one_array INTERFACE ${SOURCES})
  
 
-add_library(utils_bits SHARED bits.h )
+add_library(utils_bits INTERFACE)
 
 set(SOURCES
 utils_types
@@ -122,10 +121,10 @@ absl::bits
 target_link_libraries(utils_bits INTERFACE ${SOURCES})
  
 
-add_library(utils_index_sequence SHARED index_sequence.h )
+add_library(utils_index_sequence INTERFACE)
 
 
-add_library(utils_reduction SHARED reduction.h )
+add_library(utils_reduction INTERFACE)
 
 set(SOURCES
 utils_types
@@ -151,18 +150,13 @@ utils_reduction
 utils_types
 utils_zip_sort
 data_format_datapoint
-data_format_features_cc_proto
 data_format_internal_short_string_optimized_string
 oss_wrappers_tf_dependency
-partitioning_partitioner_cc_proto
-proto_exact_reordering_cc_proto
-proto_input_output_cc_proto
-proto_results_cc_proto
+cc_proto
 
 absl::base
 absl::flat_hash_map
 absl::node_hash_set
-com_google_protobuf::protobuf
 )
 
 target_link_libraries(utils_util_functions PUBLIC ${SOURCES})
@@ -174,22 +168,10 @@ set(SOURCES
 utils_common
 utils_types
 data_format_datapoint
-data_format_features_cc_proto
-distance_measures
+distance_measures_distance_measures
 oss_wrappers_scann_status
 oss_wrappers_tf_dependency
-partitioning_partitioner_cc_proto
-proto_brute_force_cc_proto
-proto_distance_measure_cc_proto
-proto_exact_reordering_cc_proto
-proto_hash_cc_proto
-proto_incremental_updates_cc_proto
-proto_input_output_cc_proto
-proto_metadata_cc_proto
-proto_partitioning_cc_proto
-proto_projection_cc_proto
-proto_restricts_cc_proto
-proto_scann_cc_proto
+cc_proto
 
 absl::core_headers
 absl::strings
@@ -231,7 +213,7 @@ absl::strings
 target_link_libraries(utils_memory_logging PUBLIC ${SOURCES})
  
 
-add_library(utils_bit_iterator SHARED bit_iterator.h )
+add_library(utils_bit_iterator INTERFACE)
 
 set(SOURCES
 utils_types
@@ -252,7 +234,7 @@ utils_util_functions
 base_single_machine_factory_options
 data_format_datapoint
 data_format_dataset
-distance_measures
+distance_measures_distance_measures
 distance_measures_one_to_many
 hashes_asymmetric_hashing2_querying
 oss_wrappers_scann_aligned_malloc
@@ -277,10 +259,8 @@ add_library(utils_factory_helpers SHARED factory_helpers.cc factory_helpers.h )
 
 set(SOURCES
 utils_types
-distance_measures
-proto_distance_measure_cc_proto
-proto_exact_reordering_cc_proto
-proto_scann_cc_proto
+distance_measures_distance_measures
+cc_proto
 )
 
 target_link_libraries(utils_factory_helpers PUBLIC ${SOURCES})
@@ -292,15 +272,14 @@ set(SOURCES
 utils_factory_helpers
 utils_types
 base_single_machine_base
-distance_measures
+distance_measures_distance_measures
 hashes_asymmetric_hashing2_indexing
 hashes_asymmetric_hashing2_querying
 hashes_asymmetric_hashing2_searcher
 hashes_asymmetric_hashing2_training
 hashes_asymmetric_hashing2_training_options
 projection_projection_factory
-proto_centers_cc_proto
-proto_distance_measure_cc_proto
+cc_proto
 
 absl::synchronization
 )
@@ -312,7 +291,6 @@ add_library(utils_io_oss_wrapper SHARED io_oss_wrapper.cc io_oss_wrapper.h )
 
 set(SOURCES
 utils_common
-com_google_protobuf::protobuf
 )
 
 target_link_libraries(utils_io_oss_wrapper PUBLIC ${SOURCES})
@@ -335,15 +313,14 @@ add_library(utils_input_data_utils SHARED input_data_utils.cc input_data_utils.h
 
 set(SOURCES
 data_format_dataset
-proto_hash_cc_proto
-proto_projection_cc_proto
+cc_proto
 utils_fixed_point_pre_quantized_fixed_point
 )
 
 target_link_libraries(utils_input_data_utils PUBLIC ${SOURCES})
  
 
-add_library(utils_zip_sort SHARED zip_sort.h zip_sort_impl.h )
+add_library(utils_zip_sort INTERFACE)
 
 set(SOURCES
 utils_types
@@ -372,7 +349,7 @@ absl::flags
 target_link_libraries(utils_top_n_amortized_constant PUBLIC ${SOURCES})
  
 
-add_library(utils_parallel_for SHARED parallel_for.h )
+add_library(utils_parallel_for INTERFACE)
 
 set(SOURCES
 utils_types
@@ -392,7 +369,7 @@ absl::synchronization
 target_link_libraries(utils_parallel_for INTERFACE ${SOURCES})
  
 
-add_library(utils_dataset_sampling SHARED dataset_sampling.h sampled_index_list.h )
+add_library(utils_dataset_sampling INTERFACE)
 
 set(SOURCES
 utils_types
@@ -412,7 +389,7 @@ absl::variant
 target_link_libraries(utils_dataset_sampling INTERFACE ${SOURCES})
  
 
-add_library(utils_iterators SHARED iterators.h )
+add_library(utils_iterators INTERFACE)
 
 set(SOURCES
 utils_types
@@ -438,7 +415,7 @@ data_format_dataset
 target_link_libraries(utils_scalar_quantization_helpers PUBLIC ${SOURCES})
  
 
-add_library(utils_common SHARED common.cc common.h )
+add_library(utils_common SHARED common.cc common.h)
 
 set(SOURCES
 oss_wrappers_scann_aligned_malloc
@@ -457,13 +434,13 @@ absl::flags
 absl::memory
 absl::strings
 absl::str_format
-absl:types_span
+absl::span
 )
 
 target_link_libraries(utils_common PUBLIC ${SOURCES})
  
 
-add_library(utils_noise_shaping_utils SHARED noise_shaping_utils.h )
+add_library(utils_noise_shaping_utils INTERFACE)
 
 set(SOURCES
 utils_types
@@ -472,7 +449,7 @@ utils_types
 target_link_libraries(utils_noise_shaping_utils INTERFACE ${SOURCES})
  
 
-add_library(utils_weak_ptr_cache SHARED weak_ptr_cache.h )
+add_library(utils_weak_ptr_cache INTERFACE)
 
 set(SOURCES
 utils_types

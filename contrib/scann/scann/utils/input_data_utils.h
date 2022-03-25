@@ -18,7 +18,7 @@
 #include <cstdint>
 
 #include "scann/data_format/dataset.h"
-#include "scann/proto/hash.pb.h"
+#include "hash.pb.h"
 #include "scann/utils/fixed_point/pre_quantized_fixed_point.h"
 
 namespace research_scann {

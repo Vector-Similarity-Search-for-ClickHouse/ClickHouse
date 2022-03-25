@@ -4,10 +4,10 @@ training_options_base.h)
 
 set(SOURCES
 data_format_dataset
-distance_measures
+distance_measures_distance_measures
 oss_wrappers_scann_threadpool
 projection_chunking_projection
-proto_hash_cc_proto
+cc_proto
 utils_types
 )
 
@@ -19,12 +19,11 @@ add_library(hashes_asymmetric_hashing2_training_options SHARED training_options.
 set(SOURCES
 hashes_asymmetric_hashing2_training_options_base
 data_format_dataset
-distance_measures
+distance_measures_distance_measures
 oss_wrappers_scann_threadpool
 projection_chunking_projection
 projection_projection_factory
-proto_hash_cc_proto
-proto_projection_cc_proto
+cc_proto
 utils_types
 )
 
@@ -36,15 +35,14 @@ add_library(hashes_asymmetric_hashing2_training_model SHARED training_model.cc t
 set(SOURCES
 data_format_datapoint
 data_format_dataset
-proto_centers_cc_proto
-proto_hash_cc_proto
+cc_proto
 utils_types
 )
 
 target_link_libraries(hashes_asymmetric_hashing2_training_model PUBLIC ${SOURCES})
  
 
-add_library(hashes_asymmetric_hashing2_training SHARED training.h )
+add_library(hashes_asymmetric_hashing2_training INTERFACE)
 
 set(SOURCES
 hashes_asymmetric_hashing2_training_model
@@ -70,7 +68,7 @@ add_library(hashes_asymmetric_hashing2_indexing SHARED indexing.cc indexing.h )
 set(SOURCES
 hashes_asymmetric_hashing2_training_model
 data_format_datapoint
-distance_measures
+distance_measures_distance_measures
 distance_measures_one_to_one_dot_product
 distance_measures_one_to_one_l1_distance
 distance_measures_one_to_one_l2_distance
@@ -79,7 +77,7 @@ hashes_internal_stacked_quantizers
 oss_wrappers_scann_serialize
 oss_wrappers_tf_dependency
 projection_chunking_projection
-proto_hash_cc_proto
+cc_proto
 utils_common
 utils_reduction
 utils_types
@@ -100,12 +98,12 @@ base_restrict_allowlist
 base_search_parameters
 data_format_datapoint
 data_format_dataset
-distance_measures
+distance_measures_distance_measures
 hashes_internal_asymmetric_hashing_impl
 hashes_internal_asymmetric_hashing_lut16
 hashes_internal_asymmetric_hashing_postprocess
 projection_chunking_projection
-proto_hash_cc_proto
+cc_proto
 utils_common
 utils_top_n_amortized_constant
 utils_types
@@ -129,13 +127,13 @@ base_search_parameters
 base_single_machine_base
 data_format_datapoint
 data_format_dataset
-distance_measures
+distance_measures_distance_measures
 hashes_internal_asymmetric_hashing_postprocess
 oss_wrappers_scann_aligned_malloc
 oss_wrappers_scann_down_cast
 oss_wrappers_scann_serialize
 oss_wrappers_tf_dependency
-proto_hash_cc_proto
+cc_proto
 tree_x_hybrid_leaf_searcher_optional_parameter_creator
 utils_datapoint_utils
 utils_top_n_amortized_constant
@@ -149,14 +147,12 @@ absl::flags
 target_link_libraries(hashes_asymmetric_hashing2_searcher PUBLIC ${SOURCES})
  
 
-add_library(hashes_asymmetric_hashing2_serialization SHARED 
-serialization.h )
+add_library(hashes_asymmetric_hashing2_serialization INTERFACE)
 
 set(SOURCES
 data_format_datapoint
 data_format_dataset
-proto_centers_cc_proto
-proto_hash_cc_proto
+cc_proto
 )
 
 target_link_libraries(hashes_asymmetric_hashing2_serialization INTERFACE ${SOURCES})

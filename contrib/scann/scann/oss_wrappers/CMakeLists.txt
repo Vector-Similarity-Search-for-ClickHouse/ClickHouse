@@ -10,7 +10,7 @@ target_link_libraries(oss_wrappers_tf_dependency INTERFACE ${SOURCES})
 add_library(oss_wrappers_scann_aligned_malloc SHARED scann_aligned_malloc.cc scann_aligned_malloc.h )
 
 
-add_library(oss_wrappers_scann_down_cast SHARED scann_down_cast.h )
+add_library(oss_wrappers_scann_down_cast INTERFACE)
 
 set(SOURCES
 absl::base
@@ -19,7 +19,7 @@ absl::base
 target_link_libraries(oss_wrappers_scann_down_cast INTERFACE ${SOURCES})
  
 
-add_library(oss_wrappers_scann_castops SHARED scann_castops.h )
+add_library(oss_wrappers_scann_castops INTERFACE)
 
 
 add_library(oss_wrappers_scann_bits SHARED scann_bits.cc scann_bits.h )
@@ -32,7 +32,7 @@ absl::bits
 target_link_libraries(oss_wrappers_scann_bits PUBLIC ${SOURCES})
  
 
-add_library(oss_wrappers_scann_malloc_extension SHARED scann_malloc_extension.h )
+add_library(oss_wrappers_scann_malloc_extension INTERFACE)
 
 set(SOURCES
 absl::strings
@@ -42,7 +42,7 @@ absl::optional
 target_link_libraries(oss_wrappers_scann_malloc_extension INTERFACE ${SOURCES})
  
 
-add_library(oss_wrappers_scann_random SHARED scann_random.h )
+add_library(oss_wrappers_scann_random INTERFACE)
  
 
 add_library(oss_wrappers_scann_status SHARED scann_status.cc scann_status.h )
@@ -81,7 +81,7 @@ absl::strings
 target_link_libraries(oss_wrappers_scann_serialize PUBLIC ${SOURCES})
  
 
-add_library(oss_wrappers_scann_threadpool SHARED scann_threadpool.h )
+add_library(oss_wrappers_scann_threadpool INTERFACE)
 
 set(SOURCES
 oss_wrappers_tf_dependency

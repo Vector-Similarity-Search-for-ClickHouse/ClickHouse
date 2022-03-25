@@ -21,7 +21,7 @@
 #include "scann/base/single_machine_base.h"
 #include "scann/hashes/asymmetric_hashing2/indexing.h"
 #include "scann/hashes/asymmetric_hashing2/querying.h"
-#include "scann/proto/centers.pb.h"
+#include "centers.pb.h"
 #include "scann/utils/factory_helpers.h"
 #include "scann/utils/types.h"
 

@@ -18,9 +18,33 @@
 namespace research_scann {
 namespace asymmetric_hashing_internal {
 
-template class LUT16Sse4<{BATCH_SIZE}, PrefetchStrategy::kOff>;
-template class LUT16Sse4<{BATCH_SIZE}, PrefetchStrategy::kSeq>;
-template class LUT16Sse4<{BATCH_SIZE}, PrefetchStrategy::kSmart>;
+template class LUT16Sse4<1, PrefetchStrategy::kOff>;
+template class LUT16Sse4<1, PrefetchStrategy::kSeq>;
+template class LUT16Sse4<1, PrefetchStrategy::kSmart>;
+template class LUT16Sse4<2, PrefetchStrategy::kOff>;
+template class LUT16Sse4<2, PrefetchStrategy::kSeq>;
+template class LUT16Sse4<2, PrefetchStrategy::kSmart>;
+template class LUT16Sse4<3, PrefetchStrategy::kOff>;
+template class LUT16Sse4<3, PrefetchStrategy::kSeq>;
+template class LUT16Sse4<3, PrefetchStrategy::kSmart>;
+template class LUT16Sse4<4, PrefetchStrategy::kOff>;
+template class LUT16Sse4<4, PrefetchStrategy::kSeq>;
+template class LUT16Sse4<4, PrefetchStrategy::kSmart>;
+template class LUT16Sse4<5, PrefetchStrategy::kOff>;
+template class LUT16Sse4<5, PrefetchStrategy::kSeq>;
+template class LUT16Sse4<5, PrefetchStrategy::kSmart>;
+template class LUT16Sse4<6, PrefetchStrategy::kOff>;
+template class LUT16Sse4<6, PrefetchStrategy::kSeq>;
+template class LUT16Sse4<6, PrefetchStrategy::kSmart>;
+template class LUT16Sse4<7, PrefetchStrategy::kOff>;
+template class LUT16Sse4<7, PrefetchStrategy::kSeq>;
+template class LUT16Sse4<7, PrefetchStrategy::kSmart>;
+template class LUT16Sse4<8, PrefetchStrategy::kOff>;
+template class LUT16Sse4<8, PrefetchStrategy::kSeq>;
+template class LUT16Sse4<8, PrefetchStrategy::kSmart>;
+template class LUT16Sse4<9, PrefetchStrategy::kOff>;
+template class LUT16Sse4<9, PrefetchStrategy::kSeq>;
+template class LUT16Sse4<9, PrefetchStrategy::kSmart>;
 
 }  // namespace asymmetric_hashing_internal
 }  // namespace research_scann

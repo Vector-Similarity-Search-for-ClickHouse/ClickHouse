@@ -1,4 +1,4 @@
-add_library(utils_intrinsics_simd SHARED simd.h )
+add_library(utils_intrinsics_simd INTERFACE)
 
 set(SOURCES
 utils_intrinsics_attributes
@@ -13,7 +13,7 @@ utils_intrinsics_sse4
 target_link_libraries(utils_intrinsics_simd INTERFACE ${SOURCES})
  
 
-add_library(utils_intrinsics_horizontal_sum SHARED horizontal_sum.h )
+add_library(utils_intrinsics_horizontal_sum INTERFACE)
 
 set(SOURCES
 utils_intrinsics_simd
@@ -37,10 +37,10 @@ absl::flags
 target_link_libraries(utils_intrinsics_flags PUBLIC ${SOURCES})
  
 
-add_library(utils_intrinsics_attributes SHARED attributes.h )
+add_library(utils_intrinsics_attributes INTERFACE)
  
 
-add_library(utils_intrinsics_fallback SHARED fallback.h )
+add_library(utils_intrinsics_fallback INTERFACE)
 
 set(SOURCES
 utils_intrinsics_attributes
@@ -52,7 +52,7 @@ utils_types
 target_link_libraries(utils_intrinsics_fallback INTERFACE ${SOURCES})
  
 
-add_library(utils_intrinsics_sse4 SHARED sse4.h )
+add_library(utils_intrinsics_sse4 INTERFACE)
 
 set(SOURCES
 utils_intrinsics_attributes
@@ -64,7 +64,7 @@ utils_types
 target_link_libraries(utils_intrinsics_sse4 INTERFACE ${SOURCES})
  
 
-add_library(utils_intrinsics_avx1 SHARED avx1.h )
+add_library(utils_intrinsics_avx1 INTERFACE)
 
 set(SOURCES
 utils_intrinsics_attributes
@@ -77,7 +77,7 @@ utils_types
 target_link_libraries(utils_intrinsics_avx1 INTERFACE ${SOURCES})
  
 
-add_library(utils_intrinsics_avx2 SHARED avx2.h )
+add_library(utils_intrinsics_avx2 INTERFACE)
 
 set(SOURCES
 utils_intrinsics_attributes
@@ -90,7 +90,7 @@ utils_types
 target_link_libraries(utils_intrinsics_avx2 INTERFACE ${SOURCES})
  
 
-add_library(utils_intrinsics_avx512 SHARED avx512.h )
+add_library(utils_intrinsics_avx512 INTERFACE)
 
 set(SOURCES
 utils_intrinsics_attributes

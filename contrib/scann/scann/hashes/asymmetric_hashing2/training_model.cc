@@ -15,7 +15,7 @@
 #include "scann/hashes/asymmetric_hashing2/training_model.h"
 
 #include "scann/data_format/datapoint.h"
-#include "scann/proto/hash.pb.h"
+#include "hash.pb.h"
 #include "scann/utils/types.h"
 
 namespace research_scann {

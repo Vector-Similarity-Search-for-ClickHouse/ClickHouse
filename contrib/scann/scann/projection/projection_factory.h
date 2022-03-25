@@ -22,7 +22,7 @@
 #include "scann/data_format/dataset.h"
 #include "scann/projection/chunking_projection.h"
 #include "scann/projection/projection_base.h"
-#include "scann/proto/projection.pb.h"
+#include "projection.pb.h"
 
 namespace research_scann {
 
