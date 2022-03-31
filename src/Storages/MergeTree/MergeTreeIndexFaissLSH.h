@@ -5,49 +5,56 @@
 #include <Storages/MergeTree/KeyCondition.h>
 
 #include <faiss/IndexLSH.h>
+#include "Storages/MergeTree/MergeTreeIndexSet.h"
 
-namespace FaissLSH::Detail {
- void deserializeIntoIndex(faiss::lsh::data::IndexDataSetter& data_setter, DB::ReadBuffer &istr);  
-}
+#include <memory>
 
 namespace DB {
 
 struct MergeTreeIndexGranuleFaissLSH final : public IMergeTreeIndexGranule
 {
     /// Should think about arguments
-    explicit MergeTreeIndexGranuleFaissLSH(const String & index_name_, int64_t d);
+    MergeTreeIndexGranuleFaissLSH(
+        const String & index_name_, 
+        const Block & sample_block);
+
     MergeTreeIndexGranuleFaissLSH(
         const String & index_name_,
-        const Block & index_sample_block_,
-        const faiss::IndexLSH & index);
+        const Block & sample_block,
+        std::shared_ptr<faiss::IndexLSH> index);
 
     ~MergeTreeIndexGranuleFaissLSH() override = default;
 
     void serializeBinary(WriteBuffer & ostr) const override;
     void deserializeBinary(ReadBuffer & istr, MergeTreeIndexVersion version) override;
 
-    bool empty() const override { return false; }
+    bool empty() const override;
 
     String index_name;
     Block index_sample_block;
-    faiss::IndexLSH index_impl;
+    std::shared_ptr<faiss::IndexLSH> index_impl;
 };
 
 struct MergeTreeIndexAggregatorFaissLSH final : IMergeTreeIndexAggregator
 {
     MergeTreeIndexAggregatorFaissLSH(
+        const String & index_name_,
+        const Block & sample_block);
+
+    MergeTreeIndexAggregatorFaissLSH(
         const String & index_name_, 
-        const Block & index_sample_block,
-        const faiss::IndexLSH & index );
+        const Block & sample_block,
+        const std::shared_ptr<faiss::IndexLSH> & index);
+
     ~MergeTreeIndexAggregatorFaissLSH() override = default;
 
-    bool empty() const override { return false; }
+    bool empty() const override;
     MergeTreeIndexGranulePtr getGranuleAndReset() override;
     void update(const Block & block, size_t * pos, size_t limit) override;
 
     String index_name;
     Block index_sample_block;
-    faiss::IndexLSH index_impl;
+    std::shared_ptr<faiss::IndexLSH> index_impl;
 };
 
 class MergeTreeIndexConditionFaissLSH final : public IMergeTreeIndexCondition
@@ -76,10 +83,7 @@ private:
 class MergeTreeIndexFaissLSH : public IMergeTreeIndex
 {
 public:
-    explicit MergeTreeIndexFaissLSH(const IndexDescription & index_)
-        : IMergeTreeIndex(index_)
-    {}
-
+    explicit MergeTreeIndexFaissLSH(const IndexDescription & index_);
     ~MergeTreeIndexFaissLSH() override = default;
 
     MergeTreeIndexGranulePtr createIndexGranule() const override;
@@ -91,7 +95,7 @@ public:
     bool mayBenefitFromIndexForIn(const ASTPtr & node) const override;
 
     /// Questions, questions
-    const char* getSerializedFileExtension() const override { return ".idxFaissLSH"; }
+    const char* getSerializedFileExtension() const override;
     MergeTreeIndexFormat getDeserializedFormat(const DiskPtr disk, const std::string & path_prefix) const override;
 };
 
