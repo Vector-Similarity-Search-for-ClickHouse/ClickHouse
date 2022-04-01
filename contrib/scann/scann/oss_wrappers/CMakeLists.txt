@@ -5,7 +5,8 @@ ${TensorFlow_LIBRARIES}
 )
 
 target_link_libraries(oss_wrappers_tf_dependency INTERFACE ${SOURCES})
- 
+target_include_directories(oss_wrappers_tf_dependency INTERFACE ${TensorFlow_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIR} ${Protobuf_INCLUDE_DIRS})
+
 
 add_library(oss_wrappers_scann_aligned_malloc SHARED scann_aligned_malloc.cc scann_aligned_malloc.h )
 

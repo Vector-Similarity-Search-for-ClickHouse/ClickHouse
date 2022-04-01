@@ -4,3 +4,4 @@ protobuf 3.9.2
 eigen 3.4.0
 (version should be the same as in tensorflow (or greater?))
 
+absl -- add #undef (._.)

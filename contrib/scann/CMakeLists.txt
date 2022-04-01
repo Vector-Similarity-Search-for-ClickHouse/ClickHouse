@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(scann)
+#project(scann)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_CXX_STANDARD 17)
+
 
 add_compile_options(-mssse3 -msse4)
 
-#gtest 
+# gtest 
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -18,7 +18,7 @@ include(GoogleTest)
 
 # protobuf
 INCLUDE(FindProtobuf)
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/modules")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/modules")
 find_package(Protobuf REQUIRED)
 
 # abslei 
@@ -33,15 +33,21 @@ find_package(Eigen3 REQUIRED)
 find_package(TensorFlow REQUIRED)
 
 
-set(Protobuf_IMPORT_DIRS ${PROJECT_SOURCE_DIR})
+#set(Protobuf_IMPORT_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 
+set(SCANN_COMMON_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+
+set(SCANN_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/scann_api CACHE PATH "")
 
 set(PROJECT_INCLUDE_DIRS 
-${PROJECT_SOURCE_DIR} 
-${PROJECT_BINARY_DIR} 
-${EIGEN3_INCLUDE_DIR} 
-${TensorFlow_INCLUDE_DIRS}  
-${Protobuf_INCLUDE_DIRS}
+${CMAKE_CURRENT_SOURCE_DIR}
+${CMAKE_CURRENT_BINARY_DIR}
+#${CMAKE_CURRENT_SOURCE_DIR}/abseil-cpp
+#${CMAKE_CURRENT_SOURCE_DIR}/abseil-cpp/absl
+#scann 
+#${EIGEN3_INCLUDE_DIR} 
+#${TensorFlow_INCLUDE_DIRS}  
+#${Protobuf_INCLUDE_DIRS}
 ${gtest_SOURCE_DIR}/include
 ${gtest_SOURCE_DIR}
 )
@@ -77,7 +83,8 @@ protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_SOURCES})
 
 add_library(cc_proto ${PROTO_SRCS} ${PROTO_HDRS})
 
+
+add_subdirectory(scann_api/scann)
 add_subdirectory(scann)
 
-add_executable(mian main.cpp)
-target_link_libraries(mian PUBLIC scann_ops_cc_scann) 
+
