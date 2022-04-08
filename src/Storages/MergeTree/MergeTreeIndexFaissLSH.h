@@ -35,6 +35,7 @@ struct MergeTreeIndexGranuleFaissLSH final : public IMergeTreeIndexGranule
     void deserializeBinary(ReadBuffer & istr, MergeTreeIndexVersion version) override;
 
     bool empty() const override;
+    String getOnlyColoumnName() const;
 
     String index_name;
     Block index_sample_block;
@@ -63,59 +64,22 @@ struct MergeTreeIndexAggregatorFaissLSH final : IMergeTreeIndexAggregator
     std::shared_ptr<faiss::IndexLSH> index_impl;
 };
 
-class MergeTreeIndexConditionFaissLSH final : public IMergeTreeIndexCondition
+class CommonCondition 
 {
 public:
-    explicit MergeTreeIndexConditionFaissLSH(
-        const String & index_name_);
-
-    bool alwaysUnknownOrTrue() const override;
-
-    bool mayBeTrueOnGranule(MergeTreeIndexGranulePtr idx_granule) const override;
-
-    ~MergeTreeIndexConditionFaissLSH() override = default;
-private:
-    void traverseAST(ASTPtr & node) const;
-    bool atomFromAST(ASTPtr & node) const;
-    static bool operatorFromAST(ASTPtr & node);
-
-    bool checkASTUseless(const ASTPtr & node, bool atomic = false) const;
-
-
-    String index_name;
-    /// ??? mystery
-};
-
-class MergeTreeIndexFaissLSH : public IMergeTreeIndex
-{
-public:
-    explicit MergeTreeIndexFaissLSH(const IndexDescription & index_);
-    ~MergeTreeIndexFaissLSH() override = default;
-
-    MergeTreeIndexGranulePtr createIndexGranule() const override;
-    MergeTreeIndexAggregatorPtr createIndexAggregator() const override;
-
-    MergeTreeIndexConditionPtr createIndexCondition(
-        const SelectQueryInfo & query, ContextPtr context) const override;
-
-    bool mayBenefitFromIndexForIn(const ASTPtr & node) const override;
-
-    /// Questions, questions
-    const char* getSerializedFileExtension() const override;
-    MergeTreeIndexFormat getDeserializedFormat(const DiskPtr disk, const std::string & path_prefix) const override;
-};
-
-class CommonCondition {
 
     CommonCondition(const SelectQueryInfo & query_info,
-                    ContextPtr context,
-                    const Names & key_column_names,
-                    const ExpressionActionsPtr & key_expr);
+                    ContextPtr context);
 
     bool alwaysUnknownOrTrue() const;
 
+    std::optional<float> getComparisonDistance() const;
 
+    std::optional<std::vector<float>> getTargetVector() const;
 
+    std::optional<String> getColumnName() const;
+
+    std::optional<String> getMetric() const;
 
 private:
     // Type of the vector to use as a target in the distance function
@@ -201,7 +165,48 @@ private:
 
 };
 
+class MergeTreeIndexConditionFaissLSH final : public IMergeTreeIndexCondition
+{
+public:
+    explicit MergeTreeIndexConditionFaissLSH(
+       const IndexDescription & index,
+        const SelectQueryInfo & query,
+        ContextPtr context);
+
+    bool alwaysUnknownOrTrue() const override;
+
+    bool mayBeTrueOnGranule(MergeTreeIndexGranulePtr idx_granule) const override;
+
+    ~MergeTreeIndexConditionFaissLSH() override = default;
+private:
+    void traverseAST(ASTPtr & node) const;
+    bool atomFromAST(ASTPtr & node) const;
+    static bool operatorFromAST(ASTPtr & node);
+
+    bool checkASTUseless(const ASTPtr & node, bool atomic = false) const;
 
 
+    String index_name;
+    CommonCondition condition;
+};
+
+class MergeTreeIndexFaissLSH : public IMergeTreeIndex
+{
+public:
+    explicit MergeTreeIndexFaissLSH(const IndexDescription & index_);
+    ~MergeTreeIndexFaissLSH() override = default;
+
+    MergeTreeIndexGranulePtr createIndexGranule() const override;
+    MergeTreeIndexAggregatorPtr createIndexAggregator() const override;
+
+    MergeTreeIndexConditionPtr createIndexCondition(
+        const SelectQueryInfo & query, ContextPtr context) const override;
+
+    bool mayBenefitFromIndexForIn(const ASTPtr & node) const override;
+
+    /// Questions, questions
+    const char* getSerializedFileExtension() const override;
+    MergeTreeIndexFormat getDeserializedFormat(const DiskPtr disk, const std::string & path_prefix) const override;
+};
 
 }

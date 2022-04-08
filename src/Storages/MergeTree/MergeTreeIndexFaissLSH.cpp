@@ -1,6 +1,7 @@
 #include <cstddef>
 #include <exception>
 #include <memory>
+#include <optional>
 #include <Storages/MergeTree/MergeTreeIndexFaissLSH.h>
 
 #include <Parsers/ASTFunction.h>
@@ -12,6 +13,7 @@
 #include <faiss/MetricType.h>
 #include <faiss/impl/io.h>
 #include <faiss/index_io.h>
+#include "Common/Exception.h"
 #include "Common/typeid_cast.h"
 #include "Storages/MergeTree/KeyCondition.h"
 
@@ -64,39 +66,47 @@ namespace Detail {
 
 /// Granule ////////////////////////////////////////////////////////////////////////////
 
-    MergeTreeIndexGranuleFaissLSH::MergeTreeIndexGranuleFaissLSH(
-        const String & index_name_, 
-        const Block & sample_block)
-        : index_name(index_name_), 
-          index_sample_block(sample_block), 
-          index_impl(nullptr) {}
+MergeTreeIndexGranuleFaissLSH::MergeTreeIndexGranuleFaissLSH(
+    const String & index_name_, 
+    const Block & sample_block)
+    : index_name(index_name_), 
+        index_sample_block(sample_block), 
+        index_impl(nullptr) {}
 
-    MergeTreeIndexGranuleFaissLSH::MergeTreeIndexGranuleFaissLSH(
-        const String & index_name_,
-        const Block & sample_block,
-        std::shared_ptr<faiss::IndexLSH> index) 
-        : index_name(index_name_), 
-          index_sample_block(sample_block), 
-          index_impl(std::move(index)) {}
+MergeTreeIndexGranuleFaissLSH::MergeTreeIndexGranuleFaissLSH(
+    const String & index_name_,
+    const Block & sample_block,
+    std::shared_ptr<faiss::IndexLSH> index) 
+    : index_name(index_name_), 
+        index_sample_block(sample_block), 
+        index_impl(std::move(index)) {}
 
-    void MergeTreeIndexGranuleFaissLSH::serializeBinary(WriteBuffer &ostr) const {
-        Detail::WriteBufferFaissWrapper ostr_wrapped(ostr);
-        faiss::write_index(index_impl.get(), &ostr_wrapped);
+void MergeTreeIndexGranuleFaissLSH::serializeBinary(WriteBuffer &ostr) const {
+    Detail::WriteBufferFaissWrapper ostr_wrapped(ostr);
+    faiss::write_index(index_impl.get(), &ostr_wrapped);
+}
+
+void MergeTreeIndexGranuleFaissLSH::deserializeBinary(ReadBuffer &istr, MergeTreeIndexVersion version) {
+
+    if (version != 1)
+        throw Exception(ErrorCodes::LOGICAL_ERROR, "Unknown index version {}.", version);
+
+    Detail::ReadBufferFaissWrapper istr_wrapped(istr);
+    index_impl = std::shared_ptr<faiss::IndexLSH>(dynamic_cast<faiss::IndexLSH*>(faiss::read_index(&istr_wrapped)));
+
+}
+
+bool MergeTreeIndexGranuleFaissLSH::empty() const {
+    return index_impl == nullptr;
+}
+
+String MergeTreeIndexGranuleFaissLSH::getOnlyColoumnName() const {
+    auto names = index_sample_block.getNames();
+    if (names.size() > 1) {
+        throw Exception("The index FaissLSH expected to have granule with one only column", ErrorCodes::LOGICAL_ERROR);
     }
-
-    void MergeTreeIndexGranuleFaissLSH::deserializeBinary(ReadBuffer &istr, MergeTreeIndexVersion version) {
-
-        if (version != 1)
-            throw Exception(ErrorCodes::LOGICAL_ERROR, "Unknown index version {}.", version);
-
-        Detail::ReadBufferFaissWrapper istr_wrapped(istr);
-        index_impl = std::shared_ptr<faiss::IndexLSH>(dynamic_cast<faiss::IndexLSH*>(faiss::read_index(&istr_wrapped)));
-
-    }
-
-    bool MergeTreeIndexGranuleFaissLSH::empty() const {
-        return index_impl == nullptr;
-    }
+    return names.empty() ? "" : names.back(); 
+}
 
 /// Aggregator /////////////////////////////////////////////////////////////////////////
 
@@ -162,15 +172,22 @@ namespace Detail {
         *pos += rows_read;
     }
 
-/// Condition //////////////////////////////////////////////////////////////////////////
+/// MergeTreeCondition //////////////////////////////////////////////////////////////////////////
 
+MergeTreeIndexConditionFaissLSH::MergeTreeIndexConditionFaissLSH(
+    const IndexDescription & index,
+    const SelectQueryInfo & query,
+    ContextPtr context) : index_name(index.name), condition(query, context) {}
 
 bool MergeTreeIndexConditionFaissLSH::alwaysUnknownOrTrue() const {
-    /// ???
-    return true;
+    return condition.alwaysUnknownOrTrue();
 }
 
-bool MergeTreeIndexConditionFaissLSH::mayBeTrueOnGranule(MergeTreeIndexGranulePtr /*idx_granule*/) const {
+bool MergeTreeIndexConditionFaissLSH::mayBeTrueOnGranule(MergeTreeIndexGranulePtr idx_granule) const {
+    auto * faiss_lsh_granule = dynamic_cast<MergeTreeIndexGranuleFaissLSH*>(idx_granule.get());
+    if (faiss_lsh_granule->getOnlyColoumnName() != condition.getColumnName()) {
+        return false;
+    }
     /// ???
     return true;
 }
@@ -178,11 +195,29 @@ bool MergeTreeIndexConditionFaissLSH::mayBeTrueOnGranule(MergeTreeIndexGranulePt
 // Common Condition ////////////////////////////////////////////////////////////////////
 
 CommonCondition::CommonCondition(const SelectQueryInfo & query_info,
-                                 ContextPtr context,
-                                 const Names & /*key_column_names*/,
-                                 const ExpressionActionsPtr & /*key_expr*/) {
+                                 ContextPtr context) {
     buildRPN(query_info, context);
-    matchAllRPNS();
+    index_is_useful = matchAllRPNS();
+}
+
+bool CommonCondition::alwaysUnknownOrTrue() const {
+    return !index_is_useful;
+}
+
+std::optional<float> CommonCondition::getComparisonDistance() const {
+    return index_is_useful ? std::optional(expression->distance) : std::nullopt;
+}
+
+std::optional<std::vector<float>> CommonCondition::getTargetVector() const {
+    return index_is_useful ? std::optional(expression->target) : std::nullopt;
+}
+
+std::optional<String> CommonCondition::getColumnName() const {
+    return index_is_useful ? std::optional(expression->column_name) : std::nullopt;
+}
+
+std::optional<String> CommonCondition::getMetric() const {
+    return index_is_useful ? std::optional(expression->meteic_name) : std::nullopt;
 }
 
 void CommonCondition::buildRPN(const SelectQueryInfo & query, ContextPtr context) {
@@ -437,6 +472,12 @@ MergeTreeIndexGranulePtr MergeTreeIndexFaissLSH::createIndexGranule() const {
 MergeTreeIndexAggregatorPtr MergeTreeIndexFaissLSH::createIndexAggregator() const {
     /// need index_impl constructed here
     return std::make_shared<MergeTreeIndexAggregatorFaissLSH>(index.name, index.sample_block);
+}
+
+MergeTreeIndexConditionPtr MergeTreeIndexFaissLSH::createIndexCondition(
+        const SelectQueryInfo & query, ContextPtr context) const 
+{
+    return std::make_shared<MergeTreeIndexConditionFaissLSH>(index, query, context);
 }
 
 const char* MergeTreeIndexFaissLSH::getSerializedFileExtension() const {
