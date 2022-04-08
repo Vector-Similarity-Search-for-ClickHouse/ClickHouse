@@ -4,6 +4,9 @@ if(NOT EXISTS "${ABSL_ROOT_DIR}/CMakeLists.txt")
 endif()
 set(BUILD_TESTING OFF)
 set(ABSL_PROPAGATE_CXX_STD ON)
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 add_subdirectory("${ABSL_ROOT_DIR}" "${ClickHouse_BINARY_DIR}/contrib/abseil-cpp")
 
 add_library(_abseil_swiss_tables INTERFACE)

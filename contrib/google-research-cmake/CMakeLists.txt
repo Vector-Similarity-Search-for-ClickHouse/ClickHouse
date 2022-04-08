@@ -1,6 +1,7 @@
+
 #set(SCANN_ROOT_DIR "${ClickHouse_SOURCE_DIR}/contrib/scann")
 
-add_subdirectory("${ClickHouse_SOURCE_DIR}/contrib/scann" "${ClickHouse_BINARY_DIR}/contrib/scann")
+add_subdirectory("${ClickHouse_SOURCE_DIR}/contrib/google-research/scann" "${ClickHouse_BINARY_DIR}/contrib/google-research/scann")
 
 add_library(_scann INTERFACE)
 target_link_libraries(_scann INTERFACE scann_interface)
