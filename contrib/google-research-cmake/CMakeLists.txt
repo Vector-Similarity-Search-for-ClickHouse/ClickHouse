@@ -3,6 +3,8 @@
 
 add_subdirectory("${ClickHouse_SOURCE_DIR}/contrib/google-research/scann" "${ClickHouse_BINARY_DIR}/contrib/google-research/scann")
 
+set (CMAKE_CXX_STANDARD 17)
+
 add_library(_scann INTERFACE)
 target_link_libraries(_scann INTERFACE scann_interface)
 target_include_directories(_scann SYSTEM INTERFACE ${SCANN_INCLUDE_DIRS})
