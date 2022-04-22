@@ -223,4 +223,7 @@ void bloomFilterIndexValidatorNew(const IndexDescription & index, bool attach);
 MergeTreeIndexPtr hypothesisIndexCreator(const IndexDescription & index);
 void hypothesisIndexValidator(const IndexDescription & index, bool attach);
 
+MergeTreeIndexPtr scannIndexCreator(const IndexDescription & index);
+void scannIndexValidator(const IndexDescription & index, bool attach);
+
 }
