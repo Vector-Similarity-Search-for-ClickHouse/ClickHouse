@@ -90,7 +90,7 @@ def test_condition(start_cluster):
             id UInt32, 
             url String, 
             embedding Tuple({"Float64, " * (len(embedding) - 1)}Float64),
-            
+            INDEX x embedding TYPE diskann GRANULARITY 1
         ) Engine=MergeTree ORDER BY id;
         """
     )
