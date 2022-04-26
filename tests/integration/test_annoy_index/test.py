@@ -86,7 +86,7 @@ embedding = (
 def test_condition(start_cluster):
     node.query(
         f"""
-        CREATE TABLE diskann_test (
+        CREATE TABLE annoy_test (
             id UInt32, 
             url String, 
             embedding Tuple({"Float64, " * (len(embedding) - 1)}Float64)
@@ -98,13 +98,13 @@ def test_condition(start_cluster):
 
     node.query(
         """
-        INSERT INTO diskann_test FROM INFILE './test_diskann_index/laion_cut.csv';
+        INSERT INTO annoy_test FROM INFILE './test_annoy_index/laion_cut.csv';
         """
     )
 
     select_query = f"""
     
-    select url from diskann_test where 
+    select url from annoy_test where 
     L2Distance(embedding, {str(embedding)}) < 0.0001
     
     """
