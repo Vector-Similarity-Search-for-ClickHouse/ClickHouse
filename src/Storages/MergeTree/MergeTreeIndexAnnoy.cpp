@@ -25,10 +25,10 @@ namespace DB
 namespace Annoy
 {
 
-const int NUM_OF_TREES = 20;
+const int NUM_OF_TREES = 10;
 const int DIMENSION = 512;
 
-const int32_t LIMIT = 10;
+const size_t LIMIT = 5;
 
 template<typename Dist>
 void AnnoyIndexSerialize<Dist>::serialize(WriteBuffer& ostr) const
@@ -180,15 +180,17 @@ MergeTreeIndexConditionAnnoy::MergeTreeIndexConditionAnnoy(
 bool MergeTreeIndexConditionAnnoy::mayBeTrueOnGranule(MergeTreeIndexGranulePtr idx_granule) const
 {
     // TODO: Change assert to the exception
-    assert(expression.has_value());
+    // assert(expression.has_value());
 
-    std::vector<float> target_vec = expression.value().target;
-    float min_distance = expression.value().distance;
+    // std::vector<float> target_vec = expression.value().target;
+    // float min_distance = expression.value().distance;
+    std::vector<float> target_vec = {1., 1.};
+    float min_distance = 1.;
 
     auto granule = std::dynamic_pointer_cast<MergeTreeIndexGranuleAnnoy>(idx_granule);
     auto annoy = std::dynamic_pointer_cast<Annoy::AnnoyIndexSerialize<>>(granule->index_base);
 
-    std::vector<int32_t> items;
+    std::vector<size_t> items;
     std::vector<float> dist;
     items.reserve(1);
     dist.reserve(1);
@@ -199,15 +201,17 @@ bool MergeTreeIndexConditionAnnoy::mayBeTrueOnGranule(MergeTreeIndexGranulePtr i
     return dist[0] < min_distance;
 }
 
-std::vector<int32_t> MergeTreeIndexConditionAnnoy::returnIdRecords(MergeTreeIndexGranulePtr idx_granule) const {
-    // TODO: Change assert to the exception
-    assert(expression.has_value());
+std::vector<size_t> MergeTreeIndexConditionAnnoy::returnIdRecordsImpl(MergeTreeIndexGranulePtr idx_granule) const {
+    // // TODO: Change assert to the exception
+    // assert(expression.has_value());
 
-    std::vector<int32_t> items;
-    items.reserve(LIMIT);
+    std::vector<size_t> items;
+    items.reserve(Annoy::LIMIT);
 
-    std::vector<float> target_vec = expression.value().target;
-    float min_distance = expression.value().distance;
+    // std::vector<float> target_vec = expression.value().target;
+    // float min_distance = expression.value().distance;
+    std::vector<float> target_vec(512);
+    // float min_distance = 1.;
 
     auto granule = std::dynamic_pointer_cast<MergeTreeIndexGranuleAnnoy>(idx_granule);
     auto annoy = std::dynamic_pointer_cast<Annoy::AnnoyIndexSerialize<>>(granule->index_base);
@@ -215,7 +219,8 @@ std::vector<int32_t> MergeTreeIndexConditionAnnoy::returnIdRecords(MergeTreeInde
 
     // 1 - num of nearest neighbour (NN)
     // next number - upper limit on the size of the internal queue; -1 means, that it is equal to num of trees * num of NN
-    annoy->get_nns_by_vector(&target_vec[0], LIMIT, 200, &items, NULL);
+    annoy->get_nns_by_vector(&target_vec[0], Annoy::LIMIT, -1, &items, nullptr);
+    LOG_DEBUG(&Poco::Logger::get("ANN Annoy Check"), "{}", items.size());
     return items;
 }
 

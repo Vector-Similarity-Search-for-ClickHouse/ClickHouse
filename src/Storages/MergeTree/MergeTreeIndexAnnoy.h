@@ -18,9 +18,9 @@ namespace Annoy
 {
     using AnnoyIndexThreadedBuildPolicy = ::Annoy::AnnoyIndexSingleThreadedBuildPolicy;
     template <typename Dist = ::Annoy::Euclidean>
-    class AnnoyIndexSerialize : public ::Annoy::AnnoyIndex<Int32, Float32, Dist, ::Annoy::Kiss64Random, AnnoyIndexThreadedBuildPolicy>
+    class AnnoyIndexSerialize : public ::Annoy::AnnoyIndex<size_t, Float32, Dist, ::Annoy::Kiss64Random, AnnoyIndexThreadedBuildPolicy>
     {
-        using Base = ::Annoy::AnnoyIndex<Int32, Float32, Dist, ::Annoy::Kiss64Random, AnnoyIndexThreadedBuildPolicy>;
+        using Base = ::Annoy::AnnoyIndex<size_t, Float32, Dist, ::Annoy::Kiss64Random, AnnoyIndexThreadedBuildPolicy>;
     public:
         AnnoyIndexSerialize() = delete;
         AnnoyIndexSerialize(const int dim) : Base::AnnoyIndex(dim) {}
@@ -83,9 +83,10 @@ public:
 
     bool mayBeTrueOnGranule(MergeTreeIndexGranulePtr idx_granule) const override;
 
-    std::vector<int32_t> returnIdRecords(MergeTreeIndexGranulePtr granule) const override;
-
     ~MergeTreeIndexConditionAnnoy() override = default;
+
+protected:
+    std::vector<size_t> returnIdRecordsImpl(MergeTreeIndexGranulePtr granule) const override;
 private:
     // Type of the vector to use as a target in the distance function
     using Target = std::vector<float>;

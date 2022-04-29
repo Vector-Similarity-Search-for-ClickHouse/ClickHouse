@@ -42,7 +42,7 @@
 #include <IO/WriteBufferFromOStream.h>
 
 #include <Storages/MergeTree/IMergeTreeIndexReturnIdCondition.h>
-#include <Storages/MergeTree/MarkRangeSelective.h>
+// #include <Storages/MergeTree/MarkRangeSelective.h>
 
 namespace DB
 {
@@ -1505,7 +1505,7 @@ MarkRanges MergeTreeDataSelectExecutor::filterMarksUsingIndex(
     const Settings & settings,
     const MergeTreeReaderSettings & reader_settings,
     size_t & total_granules,
-    size_t & granules_dropped,
+    size_t & /*granules_dropped*/,
     MarkCache * mark_cache,
     UncompressedCache * uncompressed_cache,
     Poco::Logger * log)
@@ -1548,7 +1548,7 @@ MarkRanges MergeTreeDataSelectExecutor::filterMarksUsingIndex(
 
     MarkRanges res;
 
-    auto return_id_condition = dynamic_cast<MergeTreeIndexReturnIdConditionPtr>(condition);
+    auto * return_id_condition = dynamic_cast<IMergeTreeIndexReturnIdCondition*>(condition.get());
 
     /// Some granules can cover two or more ranges,
     /// this variable is stored to avoid reading the same granule twice.
@@ -1557,6 +1557,7 @@ MarkRanges MergeTreeDataSelectExecutor::filterMarksUsingIndex(
     for (size_t i = 0; i < ranges.size(); ++i)
     {
         const MarkRange & index_range = index_ranges[i];
+        LOG_DEBUG(&Poco::Logger::get("ANN"), "{} {}", index_range.begin, index_range.end);
 
         if (last_index_mark != index_range.begin || !granule)
             reader.seek(index_range.begin);
@@ -1572,20 +1573,26 @@ MarkRanges MergeTreeDataSelectExecutor::filterMarksUsingIndex(
                     std::max(ranges[i].begin, index_mark * index_granularity),
                     std::min(ranges[i].end, (index_mark + 1) * index_granularity));
 
-            if (!condition->mayBeTrueOnGranule(granule))
-            {
-                ++granules_dropped;
-                continue;
-            }
+            // if (!condition->mayBeTrueOnGranule(granule))
+            // {
+            //     ++granules_dropped;
+            //     continue;
+            // }
 
             if (return_id_condition) {
-                res.push_back(MarkRangeSelected(data_range, return_id_condition->returnIdRecords(granule)));
-            }
-
-            if (res.empty() || res.back().end - data_range.begin > min_marks_for_seek)
+                size_t before = (data_range.begin - index_mark * index_granularity) * 8192;
+                size_t after = (index_mark * index_granularity - data_range.end) * 8192;
+                data_range.selected = return_id_condition->returnIdRecords(granule, before, after);
+                // LOG_DEBUG(&Poco::Logger::get("ANN"), "{} {}", data_range.begin, data_range.end);
+                // LOG_DEBUG(&Poco::Logger::get("ANN"), "{}", data_range.selected[0]);
+                res.push_back(data_range);
+            } else if (res.empty() || res.back().end - data_range.begin > min_marks_for_seek)
                 res.push_back(data_range);
             else
                 res.back().end = data_range.end;
+            
+            // LOG_DEBUG(&Poco::Logger::get("ANN"), "{} {}", res.back().begin, res.back().end);
+            // LOG_DEBUG(&Poco::Logger::get("ANN"), "{}", res.back().selected[0]);
         }
 
         last_index_mark = index_range.end - 1;

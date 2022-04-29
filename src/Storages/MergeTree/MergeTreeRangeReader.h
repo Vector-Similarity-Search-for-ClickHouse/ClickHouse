@@ -2,6 +2,7 @@
 #include <Core/Block.h>
 #include <base/logger_useful.h>
 #include <Storages/MergeTree/MarkRange.h>
+#include "Columns/IColumn.h"
 
 namespace DB
 {
@@ -71,10 +72,14 @@ public:
         size_t read(Columns & columns, size_t from_mark, size_t offset, size_t num_rows);
 
         /// Skip extra rows to current_offset and perform actual reading
-        size_t finalize(Columns & columns);
+        virtual size_t finalize(Columns & columns);
 
-        bool isFinished() const { return is_finished; }
+        virtual bool isFinished() const { return is_finished; }
 
+        virtual ~DelayedStream() = default;
+    protected:
+        size_t getCurrentMark() const { return current_mark; }
+        size_t getCurrentOffset() const { return current_offset; }
     private:
         size_t current_mark = 0;
         /// Offset from current mark in rows
@@ -95,6 +100,23 @@ public:
         size_t readRows(Columns & columns, size_t num_rows);
     };
 
+    class SelectiveDelayedStream : public DelayedStream {
+      public:
+        SelectiveDelayedStream(const MarkRange & range, size_t current_task_last_mark, IMergeTreeReader * merge_tree_reader);
+
+        SelectiveDelayedStream(SelectiveDelayedStream&& rhs) = default;
+
+        virtual size_t finalize(Columns & columns) override;
+
+        virtual bool isFinished() const override { return DelayedStream::isFinished() || next_row >= range.selected.size(); }
+
+        ~SelectiveDelayedStream() override = default;
+      private:
+        const MergeTreeIndexGranularity * index_granularity = nullptr;
+        const MarkRange range;
+        size_t next_row = 0;
+    };
+
     /// Very thin wrapper for DelayedStream
     /// Check bounds of read ranges and make steps between marks
     class Stream
@@ -102,6 +124,8 @@ public:
     public:
         Stream() = default;
         Stream(size_t from_mark, size_t to_mark,
+               size_t current_task_last_mark, IMergeTreeReader * merge_tree_reader);
+        Stream(const MarkRange & mark_range,
                size_t current_task_last_mark, IMergeTreeReader * merge_tree_reader);
 
         /// Returns the number of rows added to block.
@@ -133,7 +157,7 @@ public:
 
         size_t current_mark_index_granularity = 0;
 
-        DelayedStream stream;
+        std::shared_ptr<DelayedStream> stream;
 
         void checkNotFinished() const;
         void checkEnoughSpaceInCurrentGranule(size_t num_rows) const;

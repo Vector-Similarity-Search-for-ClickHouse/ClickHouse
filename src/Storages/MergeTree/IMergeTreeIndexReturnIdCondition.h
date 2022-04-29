@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Storages/MergeTree/IMergeTreeIndices.h>
+#include "Storages/MergeTree/MergeTreeIndices.h"
 
 namespace DB
 {
@@ -13,7 +13,10 @@ public:
 
     virtual bool mayBeTrueOnGranule(MergeTreeIndexGranulePtr granule) const override = 0;
 
-    virtual std::vector<int32_t> returnIdRecords(MergeTreeIndexGranulePtr granule) const = 0;
+    std::vector<size_t> returnIdRecords(MergeTreeIndexGranulePtr granule, size_t before, size_t after) const;
+
+protected:
+    virtual std::vector<size_t> returnIdRecordsImpl(MergeTreeIndexGranulePtr granule) const = 0;
 };
 
 
