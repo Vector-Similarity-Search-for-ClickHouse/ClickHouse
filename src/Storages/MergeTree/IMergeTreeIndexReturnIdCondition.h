@@ -13,7 +13,7 @@ public:
 
     virtual bool mayBeTrueOnGranule(MergeTreeIndexGranulePtr granule) const override = 0;
 
-    std::vector<size_t> returnIdRecords(MergeTreeIndexGranulePtr granule, size_t before, size_t after) const;
+    std::vector<size_t> returnIdRecords(MergeTreeIndexGranulePtr granule, size_t from, size_t to) const;
 
 protected:
     virtual std::vector<size_t> returnIdRecordsImpl(MergeTreeIndexGranulePtr granule) const = 0;
