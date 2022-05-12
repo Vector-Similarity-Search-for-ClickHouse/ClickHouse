@@ -3,6 +3,8 @@
 #include <Storages/MergeTree/KeyCondition.h>
 #include <Storages/MergeTree/MergeTreeIndices.h>
 
+#include "base/types.h"
+
 #include <optional>
 #include <vector>
 
@@ -21,10 +23,12 @@ namespace ANNCondition
     There are two main patterns of queries being supported
 
     1) Search query type
-    SELECT * FROM * WHERE DistanceFunc(column, target_vector) < floatLiteral [LIMIT count]
+    SELECT * FROM * WHERE DistanceFunc(column, target_vector) < floatLiteral LIMIT count
 
     2) OrderBy query type
-    SELECT * FROM * WHERE * ORDERBY DistanceFunc(column, target_vector) LIMIT some_length
+    SELECT * FROM * WHERE * ORDERBY DistanceFunc(column, target_vector) LIMIT count
+
+    *Query without LIMIT count is not supported*
 
     target_vector(should have float coordinates) examples:
         tuple(0.1, 0.1, ...., 0.1) or (0.1, 0.1, ...., 0.1)
@@ -83,7 +87,7 @@ public:
     bool queryHasWhereClause() const;
 
     // length's value from LIMIT section, nullopt if not any
-    std::optional<UInt64> getLimitCount() const;
+    UInt64 getLimitCount() const;
 
     // value of 'ann_index_params' if have in SETTINGS section, empty string otherwise
     String getSettingsStr() const;
@@ -199,12 +203,11 @@ private:
 
     // Data extracted from query, in case query has supported type
     ANNExprOpt ann_expr{std::nullopt};
-    LimitExprOpt limit_expr{std::nullopt};
+    UInt64 limit_count{0};
     String ann_index_params; // Empty string if no params
 
     bool order_by_query_type{false};
     bool where_query_type{false};
-    bool has_limit{false};
 
     // true if we have one of two supported query types
     bool index_is_useful{false};
