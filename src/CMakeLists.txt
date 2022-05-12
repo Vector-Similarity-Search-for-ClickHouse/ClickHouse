@@ -530,6 +530,8 @@ if (TARGET ch_contrib::rapidjson)
 endif()
 
 dbms_target_link_libraries(PUBLIC ch_contrib::consistent_hashing)
+dbms_target_link_libraries(PUBLIC ch_contrib::spotify-annoy)
+dbms_target_link_libraries(PUBLIC ch_contrib::annoy)
 
 include ("${ClickHouse_SOURCE_DIR}/cmake/add_check.cmake")
 
