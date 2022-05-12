@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Storages/MergeTree/KeyCondition.h>
+#include <Storages/MergeTree/MergeTreeIndices.h>
 
 #include <optional>
 #include <vector>
@@ -208,6 +209,23 @@ private:
     // true if we have one of two supported query types
     bool index_is_useful{false};
 };
+
+
+class IMergeTreeIndexConditionAnn : public IMergeTreeIndexCondition {
+public:
+    virtual ~IMergeTreeIndexConditionAnn() override = default;
+    
+    virtual bool alwaysUnknownOrTrue() const override = 0;
+
+    virtual bool mayBeTrueOnGranule(MergeTreeIndexGranulePtr granule) const override = 0;
+
+    std::vector<size_t> getRows(MergeTreeIndexGranulePtr granule, size_t from, size_t to) const;
+
+protected:
+    virtual std::vector<size_t> getRowsImpl(MergeTreeIndexGranulePtr granule) const = 0;
+};
+
+using MergeTreeIndexConditionAnnPtr = std::shared_ptr<IMergeTreeIndexConditionAnn>;
 
 }
 
