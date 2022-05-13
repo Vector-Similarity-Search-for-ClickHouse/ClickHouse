@@ -204,9 +204,19 @@ bool MergeTreeIndexConditionAnnoy::mayBeTrueOnGranule(MergeTreeIndexGranulePtr i
     std::vector<int32_t> items;
     std::vector<float> dist;
 
-    // 1 - num of nearest neighbour (NN)
-    // next number - upper limit on the size of the internal queue; -1 means, that it is equal to num of trees * num of NN
-    annoy->get_nns_by_vector(&target_vec[0], 1, -1, &items, &dist);
+    int k_search = -1;
+    auto settings_str = condition.getSettingsStr();
+    if (!settings_str.empty()) {
+        try
+        {
+            k_search = std::stoi(settings_str);
+        }
+        catch (...)
+        {
+            throw Exception("Setting of the annoy index should be int");
+        }
+    }
+    annoy->get_nns_by_vector(&target_vec[0], 1, k_search, &items, &dist);
     return dist[0] < max_distance;
 }
 
@@ -215,6 +225,55 @@ bool MergeTreeIndexConditionAnnoy::alwaysUnknownOrTrue() const
     return condition.alwaysUnknownOrTrue("L2Distance");
 }
 
+std::vector<size_t> MergeTreeIndexConditionAnnoy::getUsefulRanges(MergeTreeIndexGranulePtr idx_granule) const
+{
+    UInt64 limit = condition.getLimitCount();
+    std::optional<float> comp_dist
+        = condition.queryHasWhereClause() ? std::optional<float>(condition.getComparisonDistance()) : std::nullopt;
+    std::vector<float> target_vec = condition.getTargetVector();
+
+    std::shared_ptr<MergeTreeIndexGranuleAnnoy> granule = std::dynamic_pointer_cast<MergeTreeIndexGranuleAnnoy>(idx_granule);
+    if (!granule)
+        throw Exception("Annoy index condition got a granule with the wrong type.", ErrorCodes::LOGICAL_ERROR);
+    auto annoy = granule->index_base;
+
+    std::vector<int32_t> items;
+    std::vector<float> dist;
+    items.reserve(limit);
+    dist.reserve(limit);
+
+    int k_search = -1;
+    auto settings_str = condition.getSettingsStr();
+    if (!settings_str.empty()) {
+        try
+        {
+            k_search = std::stoi(settings_str);
+        }
+        catch (...)
+        {
+            throw Exception("Setting of the annoy index should be int");
+        }
+    }
+    annoy->get_nns_by_vector(&target_vec[0], limit, k_search, &items, &dist);
+    std::unordered_set<size_t> result;
+    for (size_t i = 0; i < idist.size(); ++i)
+    {
+        if (comp_dist && dist[i] > comp_dist)
+        {
+            continue;
+        }
+        result.insert(items[i] / 8192);
+    }
+
+    std::vector<size_t> result_vector;
+    result_vector.reserve(result.size());
+    for (auto range : result)
+    {
+        result_vector.push_back(range);
+    }
+
+    return result_vector;
+}
 
 MergeTreeIndexGranulePtr MergeTreeIndexAnnoy::createIndexGranule() const
 {
