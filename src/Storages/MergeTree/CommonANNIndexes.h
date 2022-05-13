@@ -211,10 +211,11 @@ private:
 };
 
 
-class IMergeTreeIndexConditionAnn : public IMergeTreeIndexCondition {
+class IMergeTreeIndexConditionAnn : public IMergeTreeIndexCondition
+{
 public:
     virtual ~IMergeTreeIndexConditionAnn() override = default;
-    
+
     virtual bool alwaysUnknownOrTrue() const override = 0;
 
     virtual bool mayBeTrueOnGranule(MergeTreeIndexGranulePtr granule) const override = 0;

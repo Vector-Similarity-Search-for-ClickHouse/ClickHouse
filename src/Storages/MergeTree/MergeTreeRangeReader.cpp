@@ -172,30 +172,32 @@ size_t MergeTreeRangeReader::DelayedStream::finalize(Columns & columns)
 MergeTreeRangeReader::SelectiveDelayedStream::SelectiveDelayedStream(const MarkRange & range_, size_t current_task_last_mark_, IMergeTreeReader * merge_tree_reader_)
     : DelayedStream(range_.begin, current_task_last_mark_, merge_tree_reader_)
     , index_granularity(&(merge_tree_reader_->data_part->index_granularity))
-    , range(range_) {
-}
+    , range(range_)
+{}
 
-size_t MergeTreeRangeReader::SelectiveDelayedStream::finalize(Columns & columns) {
+size_t MergeTreeRangeReader::SelectiveDelayedStream::finalize(Columns & columns)
+{
     Columns all_rows(columns.size());
     size_t read_rows = DelayedStream::finalize(all_rows);
     size_t stream_offset_from_range;
-    if (range.begin == DelayedStream::getCurrentMark()) {
+    if (range.begin == DelayedStream::getCurrentMark())
         stream_offset_from_range = 0;
-    } else {
+    else
         stream_offset_from_range = index_granularity->getRowsCountInRange(range.begin, DelayedStream::getCurrentMark()) + getCurrentOffset();
-    }
 
     size_t max_row = next_row;
-    for (size_t i = 0; i < columns.size(); ++i) {
-        if (all_rows[i] == nullptr) {
+    for (size_t i = 0; i < columns.size(); ++i)
+    {
+        if (all_rows[i] == nullptr)
             continue;
-        }
-        if (columns[i] == nullptr) {
+        if (columns[i] == nullptr)
             columns[i] = all_rows[i]->cloneEmpty();
-        }
-        for (size_t row = next_row; row < range.selected.size(); ++row) {
+
+        for (size_t row = next_row; row < range.selected.size(); ++row)
+        {
             size_t row_num = range.selected[row] + stream_offset_from_range;
-            if (row_num < all_rows[i]->size()) {
+            if (row_num < all_rows[i]->size())
+            {
                 columns[i]->assumeMutable()->insertFrom(*all_rows[i], row_num);
                 max_row = std::max(row + 1, max_row);
             }
@@ -207,33 +209,16 @@ size_t MergeTreeRangeReader::SelectiveDelayedStream::finalize(Columns & columns)
 }
 
 
-MergeTreeRangeReader::Stream::Stream(
-        size_t from_mark, size_t to_mark, size_t current_task_last_mark, IMergeTreeReader * merge_tree_reader_)
-        : current_mark(from_mark), offset_after_current_mark(0)
-        , last_mark(to_mark)
-        , merge_tree_reader(merge_tree_reader_)
-        , index_granularity(&(merge_tree_reader->data_part->index_granularity))
-        , current_mark_index_granularity(index_granularity->getMarkRows(from_mark))
-        , stream(std::make_shared<DelayedStream>(from_mark, current_task_last_mark, merge_tree_reader))
-{
-    size_t marks_count = index_granularity->getMarksCount();
-    if (from_mark >= marks_count)
-        throw Exception("Trying create stream to read from mark №"+ toString(current_mark) + " but total marks count is "
-            + toString(marks_count), ErrorCodes::LOGICAL_ERROR);
-
-    if (last_mark > marks_count)
-        throw Exception("Trying create stream to read to mark №"+ toString(current_mark) + " but total marks count is "
-            + toString(marks_count), ErrorCodes::LOGICAL_ERROR);
-}
-
 MergeTreeRangeReader::Stream::Stream(const MarkRange & mark_range,
-        size_t current_task_last_mark, IMergeTreeReader * merge_tree_reader_) 
+        size_t current_task_last_mark, IMergeTreeReader * merge_tree_reader_)
         : current_mark(mark_range.begin), offset_after_current_mark(0)
         , last_mark(mark_range.end)
         , merge_tree_reader(merge_tree_reader_)
         , index_granularity(&(merge_tree_reader->data_part->index_granularity))
         , current_mark_index_granularity(index_granularity->getMarkRows(mark_range.begin))
-        , stream(std::make_shared<SelectiveDelayedStream>(mark_range, current_task_last_mark, merge_tree_reader))
+        , stream(mark_range.selected.empty()
+            ? std::make_shared<DelayedStream>(mark_range.begin, current_task_last_mark, merge_tree_reader)
+            : std::make_shared<SelectiveDelayedStream>(mark_range, current_task_last_mark, merge_tree_reader))
 {
     size_t marks_count = index_granularity->getMarksCount();
     if (current_mark >= marks_count)
@@ -333,9 +318,9 @@ void MergeTreeRangeReader::Stream::skip(size_t num_rows)
 
 size_t MergeTreeRangeReader::Stream::finalize(Columns & columns)
 {
-    if (!stream) {
+    if (!stream)
         return 0;
-    }
+
     size_t read_rows = stream->finalize(columns);
 
     if (stream->isFinished())
@@ -841,11 +826,8 @@ MergeTreeRangeReader::ReadResult MergeTreeRangeReader::startReadingChain(size_t 
             if (stream.isFinished())
             {
                 result.addRows(stream.finalize(result.columns));
-                if (!ranges.front().selected.empty()) {
+                if (!ranges.front().selected.empty())
                     stream = Stream(ranges.front(), current_task_last_mark, merge_tree_reader);
-                } else {
-                    stream = Stream(ranges.front().begin, ranges.front().end, current_task_last_mark, merge_tree_reader);
-                }
                 result.addRange(ranges.front());
                 ranges.pop_front();
             }
@@ -904,11 +886,8 @@ Columns MergeTreeRangeReader::continueReadingChain(ReadResult & result, size_t &
             num_rows += stream.finalize(columns);
             const auto & range = started_ranges[next_range_to_start].range;
             ++next_range_to_start;
-            if (!range.selected.empty()) {
+            if (!range.selected.empty())
                 stream = Stream(range, current_task_last_mark, merge_tree_reader);
-            } else {
-                stream = Stream(range.begin, range.end, current_task_last_mark, merge_tree_reader);
-            }
         }
 
         bool last = i + 1 == size;

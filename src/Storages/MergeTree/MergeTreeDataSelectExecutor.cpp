@@ -1548,7 +1548,7 @@ MarkRanges MergeTreeDataSelectExecutor::filterMarksUsingIndex(
     MarkRanges res;
 
     auto * return_id_condition = dynamic_cast<ANNCondition::IMergeTreeIndexConditionAnn*>(condition.get());
-    
+
     /// Some granules can cover two or more ranges,
     /// this variable is stored to avoid reading the same granule twice.
     MergeTreeIndexGranulePtr granule = nullptr;
@@ -1570,11 +1570,13 @@ MarkRanges MergeTreeDataSelectExecutor::filterMarksUsingIndex(
             MarkRange data_range(
                     std::max(ranges[i].begin, index_mark * index_granularity),
                     std::min(ranges[i].end, (index_mark + 1) * index_granularity));
-            if (return_id_condition) {
+            if (return_id_condition)
+            {
                 size_t before = (data_range.begin - index_mark * index_granularity) * 8192;
                 size_t after = (index_mark * index_granularity - data_range.end) * 8192;
                 data_range.selected = return_id_condition->getRows(granule, before, after);
-                if (data_range.selected.empty()) {
+                if (data_range.selected.empty())
+                {
                     ++granules_dropped;
                 }
                 res.push_back(data_range);

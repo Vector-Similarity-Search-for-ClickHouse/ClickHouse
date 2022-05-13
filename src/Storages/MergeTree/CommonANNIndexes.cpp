@@ -497,11 +497,14 @@ void ANNCondition::panicIfWrongBuiltRPN()
                 "Wrong parsed AST in buildRPN\n", DB::ErrorCodes::INCORRECT_QUERY);
 }
 
-std::vector<size_t> IMergeTreeIndexConditionAnn::getRows(MergeTreeIndexGranulePtr granule, size_t from, size_t to) const {
+std::vector<size_t> IMergeTreeIndexConditionAnn::getRows(MergeTreeIndexGranulePtr granule, size_t from, size_t to) const
+{
     std::vector<size_t> ans = getRowsImpl(granule);
     std::vector<size_t> result;
-    for (const auto& x : ans) {
-        if (x >= from && x < to) {
+    for (const auto& x : ans)
+    {
+        if (x >= from && x < to)
+        {
             result.push_back(x - from);
         }
     }

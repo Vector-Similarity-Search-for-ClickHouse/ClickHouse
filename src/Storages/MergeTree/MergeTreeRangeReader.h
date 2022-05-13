@@ -100,7 +100,8 @@ public:
         size_t readRows(Columns & columns, size_t num_rows);
     };
 
-    class SelectiveDelayedStream : public DelayedStream {
+    class SelectiveDelayedStream : public DelayedStream
+    {
       public:
         SelectiveDelayedStream(const MarkRange & range, size_t current_task_last_mark, IMergeTreeReader * merge_tree_reader);
 
@@ -123,8 +124,6 @@ public:
     {
     public:
         Stream() = default;
-        Stream(size_t from_mark, size_t to_mark,
-               size_t current_task_last_mark, IMergeTreeReader * merge_tree_reader);
         Stream(const MarkRange & mark_range,
                size_t current_task_last_mark, IMergeTreeReader * merge_tree_reader);
 
