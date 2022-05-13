@@ -36,7 +36,7 @@ static void writeMarkRangesBinary(const MarkRanges & ranges, WriteBuffer & buf)
 {
     writeVarUInt(ranges.size(), buf);
 
-    for (const auto & [begin, end] : ranges)
+    for (const auto & [begin, end, _] : ranges)
     {
         writeBinary(begin, buf);
         writeBinary(end, buf);
