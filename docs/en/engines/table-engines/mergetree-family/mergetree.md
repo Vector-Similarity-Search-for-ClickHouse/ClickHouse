@@ -946,6 +946,7 @@ Examples of working configurations can be found in integration tests directory (
 -   `_part_uuid` — Unique part identifier (if enabled MergeTree setting `assign_part_uuids`).
 -   `_partition_value` — Values (a tuple) of a `partition by` expression.
 -   `_sample_factor` — Sample factor (from the query).
+
 ## ANN Skip Index {#table_engines-ANNIndex}
 
 `ANNIndexes` are designed to speed up two types of queries
