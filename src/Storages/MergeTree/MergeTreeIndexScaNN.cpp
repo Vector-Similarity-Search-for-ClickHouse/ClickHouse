@@ -1,23 +1,32 @@
 #include <cmath>
 #include <memory>
 #include <vector>
+#include <libunwind.h>
 
 #include <Core/Field.h>
 #include <Storages/MergeTree/MergeTreeIndexScaNN.h>
 
-#include <scann/dataset.hpp>
-#include <scann/scann_builder.hpp>
+// #include <scann/dataset.hpp>
+// #include <scann/io.hpp>
+// #include <scann/scann_builder.hpp>
+#include "IO/ReadBuffer.h"
+#include "IO/WriteBuffer.h"
+#include "Interpreters/Context.h"
+#include "Interpreters/Context_fwd.h"
+#include "base/logger_useful.h"
+
+#include <Interpreters/scann_builder.hpp>
 
 namespace DB
 {
 
-MergeTreeIndexGranuleScaNN::MergeTreeIndexGranuleScaNN(const String & index_name_, const Block & index_sample_block_)
-    : index_name(index_name_), index_sample_block(index_sample_block_)
+MergeTreeIndexGranuleScaNN::MergeTreeIndexGranuleScaNN(const String & index_name_, const Block & index_sample_block_, ContextPtr context)
+    : MergeTreeIndexGranuleScaNN(index_name_, index_sample_block_, context, {})
 {
 }
 
 MergeTreeIndexGranuleScaNN::MergeTreeIndexGranuleScaNN(
-    const String & index_name_, const Block & index_sample_block_, std::vector<Float32> && data_)
+    const String & index_name_, const Block & index_sample_block_, ContextPtr  context, std::vector<Float32> && data_)
     : index_name(index_name_), index_sample_block(index_sample_block_), data(data_)
 {
     const int dimension = 3;
@@ -37,28 +46,62 @@ MergeTreeIndexGranuleScaNN::MergeTreeIndexGranuleScaNN(
 
     const size_t reordering_num_neighbors = 100;
 
-    searcher = scann::ScannBuilder(data_set, num_neighbors, distance_measure)
+    // searcher = 
+    std::move(scann::ScannBuilder(data_set, num_neighbors, distance_measure)
                    .Tree(num_leaves, num_leaves_to_search, training_sample_size)
                    .ScoreAh(dimension_per_block, anisotropic_quantization_threshold)
                    .Reorder(reordering_num_neighbors)
-                   .Build();
+                   .Build(context));
+
+    // searcher = ;
 }
 
-void MergeTreeIndexGranuleScaNN::serializeBinary(WriteBuffer & ostr) const {
-    searcher.Serialize(ostr);
+// class Writer final : public scann::IWriter
+// {
+// public:
+//     explicit Writer(WriteBuffer & ostr_) : ostr(ostr_) { }
+
+//     void write(const char * from, size_t n) final { ostr.write(from, n); }
+//     ~Writer() override = default;
+
+// private:
+//     WriteBuffer & ostr;
+// };
+
+void MergeTreeIndexGranuleScaNN::serializeBinary(WriteBuffer & /*ostr*/) const
+{
+    // Writer writer(ostr);
+    // searcher.Serialize(writer);
 }
-void MergeTreeIndexGranuleScaNN::deserializeBinary(ReadBuffer & istr, MergeTreeIndexVersion /*version*/) {
-    searcher.Deserialize(istr);
+
+// class Reader : public scann::IReader
+// {
+// public:
+//     explicit Reader(ReadBuffer & istr_) : istr(istr_) { }
+
+//     void read(char * to, size_t n) final { istr.read(to, n); }
+//     ~Reader() override = default;
+
+// private:
+//     ReadBuffer & istr;
+// };
+
+void MergeTreeIndexGranuleScaNN::deserializeBinary(ReadBuffer & /*istr*/, MergeTreeIndexVersion /*version*/)
+{
+    // Reader reader(istr);
+    // searcher.Deserialize(reader);
 }
 
 bool MergeTreeIndexGranuleScaNN::empty() const
 {
-    return !searcher.IsInitialized();
+    // return !searcher.IsInitialized();
+    // TODO
+    return true;
 }
 
 
-MergeTreeIndexAggregatorScaNN::MergeTreeIndexAggregatorScaNN(const String & index_name_, const Block & index_sample_block_)
-    : index_name(index_name_), index_sample_block(index_sample_block_)
+MergeTreeIndexAggregatorScaNN::MergeTreeIndexAggregatorScaNN(const String & index_name_, const Block & index_sample_block_, ContextPtr context_)
+    : index_name(index_name_), index_sample_block(index_sample_block_), context(context_)
 {
     // TODO: Check number of column
     // TODO: extract from index_sample_block_ vector dimension
@@ -66,7 +109,7 @@ MergeTreeIndexAggregatorScaNN::MergeTreeIndexAggregatorScaNN(const String & inde
 
 MergeTreeIndexGranulePtr MergeTreeIndexAggregatorScaNN::getGranuleAndReset()
 {
-    return std::make_shared<MergeTreeIndexGranuleScaNN>(index_name, index_sample_block, std::move(data));
+    return std::make_shared<MergeTreeIndexGranuleScaNN>(index_name, index_sample_block, context, std::move(data));
 }
 
 bool MergeTreeIndexAggregatorScaNN::empty() const
@@ -127,15 +170,16 @@ bool MergeTreeIndexConditionScaNN::mayBeTrueOnGranule(MergeTreeIndexGranulePtr /
 
 MergeTreeIndexGranulePtr MergeTreeIndexScaNN::createIndexGranule() const
 {
-    return std::make_shared<MergeTreeIndexGranuleScaNN>(index.name, index.sample_block);
+    return std::make_shared<MergeTreeIndexGranuleScaNN>(index.name, index.sample_block, context);
 }
 MergeTreeIndexAggregatorPtr MergeTreeIndexScaNN::createIndexAggregator() const
 {
-    return std::make_shared<MergeTreeIndexAggregatorScaNN>(index.name, index.sample_block);
+    return std::make_shared<MergeTreeIndexAggregatorScaNN>(index.name, index.sample_block, context);
 }
 
-MergeTreeIndexConditionPtr MergeTreeIndexScaNN::createIndexCondition(const SelectQueryInfo & query, ContextPtr context) const
+MergeTreeIndexConditionPtr MergeTreeIndexScaNN::createIndexCondition(const SelectQueryInfo & query, ContextPtr context_) const
 {
+    context = context_;
     return std::make_shared<MergeTreeIndexConditionScaNN>(index, query, context);
 }
 

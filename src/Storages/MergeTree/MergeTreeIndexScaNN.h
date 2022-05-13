@@ -1,10 +1,14 @@
 #pragma once
 
 #include <Storages/MergeTree/MergeTreeIndices.h>
+#include "Core/Types.h"
+#include "Interpreters/Context_fwd.h"
 #include "base/types.h"
 
-#include <scann/dataset.hpp>
-#include <scann/scann_searcher.hpp>
+// #include <scann/dataset.hpp>
+// #include <scann/scann_searcher.hpp>
+
+#include <Interpreters/scann.h>
 
 #include <vector>
 
@@ -14,8 +18,9 @@ namespace DB
 
 struct MergeTreeIndexGranuleScaNN final : public IMergeTreeIndexGranule
 {
-    MergeTreeIndexGranuleScaNN(const String & index_name_, const Block & index_sample_block_);
-    MergeTreeIndexGranuleScaNN(const String & index_name_, const Block & index_sample_block_, std::vector<Float32> && data);
+    MergeTreeIndexGranuleScaNN(const String & index_name_, const Block & index_sample_block_, ContextPtr context);
+    MergeTreeIndexGranuleScaNN(
+        const String & index_name_, const Block & index_sample_block_, ContextPtr context, std::vector<Float32> && data);
 
     ~MergeTreeIndexGranuleScaNN() override = default;
 
@@ -28,12 +33,12 @@ struct MergeTreeIndexGranuleScaNN final : public IMergeTreeIndexGranule
     Block index_sample_block;
 
     std::vector<Float32> data;
-    scann::ScannSearcher searcher;
+    std::optional<scann::ScannSearcher> searcher;
 };
 
 struct MergeTreeIndexAggregatorScaNN final : IMergeTreeIndexAggregator
 {
-    MergeTreeIndexAggregatorScaNN(const String & index_name_, const Block & index_sample_block_);
+    MergeTreeIndexAggregatorScaNN(const String & index_name_, const Block & index_sample_block_, ContextPtr context);
     ~MergeTreeIndexAggregatorScaNN() override = default;
 
     bool empty() const override;
@@ -45,6 +50,8 @@ struct MergeTreeIndexAggregatorScaNN final : IMergeTreeIndexAggregator
 
     // row_major_array
     std::vector<Float32> data;
+
+    ContextPtr context {nullptr};
 };
 
 class MergeTreeIndexConditionScaNN final : public IMergeTreeIndexCondition
@@ -78,6 +85,8 @@ public:
 
     const char * getSerializedFileExtension() const override { return ".idx2"; }
     MergeTreeIndexFormat getDeserializedFormat(const DiskPtr disk, const std::string & path_prefix) const override;
+private:
+    mutable ContextPtr context;
 };
 
 

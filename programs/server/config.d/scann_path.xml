@@ -1,0 +1,3 @@
+<clickhouse>
+    <scann_dynamic_library_path>/home/ubuntu/disk/NikeVas/ClickHouse/contrib/google-research/scann/build/scann_api/scann/libscann_interface.so</scann_dynamic_library_path>
+</clickhouse>
