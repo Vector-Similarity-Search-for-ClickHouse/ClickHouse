@@ -194,7 +194,7 @@ bool MergeTreeIndexConditionAnnoy::mayBeTrueOnGranule(MergeTreeIndexGranulePtr i
         throw Exception("The metric in the request (" + condition.getMetric() + ")"
             + "does not match with the metric in the index (L2Distance)", ErrorCodes::INCORRECT_QUERY);
     }
-    if (condition.getSpaceDim() == annoy->getSpaceDim()) {
+    if (condition.getSpaceDim() != annoy->getSpaceDim()) {
         throw Exception("The dimension of the space in the request (" + toString(condition.getSpaceDim()) + ")"
             + "does not match with the dimension in the index (" + toString(annoy->getSpaceDim()) + ")", ErrorCodes::INCORRECT_QUERY);
     }
