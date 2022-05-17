@@ -555,6 +555,10 @@ endif()
 
 dbms_target_link_libraries(PUBLIC ch_contrib::consistent_hashing)
 
+if (ENABLE_FAISS)
+    dbms_target_link_libraries(PUBLIC ch_contrib::faiss)
+endif()
+
 include ("${ClickHouse_SOURCE_DIR}/cmake/add_check.cmake")
 
 if (ENABLE_TESTS)

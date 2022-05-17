@@ -152,6 +152,22 @@ endif()
 add_contrib (sqlite-cmake sqlite-amalgamation)
 add_contrib (s2geometry-cmake s2geometry)
 
+set (ENABLE_FAISS_DEFAULT ${ENABLE_LIBRARIES})
+option(ENABLE_FAISS "Enable Faiss indexes support" ${ENABLE_FAISS_DEFAULT})
+if (NOT CMAKE_SYSTEM_NAME MATCHES "Linux" OR NOT COMPILER_CLANG OR NOT CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 13.0.1)
+    message (WARNING "Faiss disabled. Supports only in Linux environment and Clang-13.0.1.")
+    set (ENABLE_FAISS OFF PARENT_SCOPE)
+    set (ENABLE_FAISS OFF)
+endif ()
+if (ENABLE_FAISS)
+    message("Use Faiss library")
+    add_compile_definitions(ENABLE_FAISS)
+    add_contrib (faiss-cmake faiss)
+    add_contrib (openmp-cmake openmp)
+    add_contrib (blas-cmake blas)
+    add_contrib (lapack-cmake lapack)
+endif()
+
 # Put all targets defined here and in subdirectories under "contrib/<immediate-subdir>" folders in GUI-based IDEs.
 # Some of third-party projects may override CMAKE_FOLDER or FOLDER property of their targets, so they would not appear
 # in "contrib/..." as originally planned, so we workaround this by fixing FOLDER properties of all targets manually,
