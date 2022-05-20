@@ -53,6 +53,8 @@ add_contrib (sparsehash-c11-cmake sparsehash-c11)
 add_contrib (abseil-cpp-cmake abseil-cpp)
 add_contrib (magic-enum-cmake magic_enum)
 add_contrib (boost-cmake boost)
+add_contrib (gperftools-cmake gperftools)
+add_contrib (diskann-cmake diskann)
 add_contrib (cctz-cmake cctz)
 add_contrib (consistent-hashing)
 add_contrib (dragonbox-cmake dragonbox)
@@ -87,6 +89,7 @@ add_contrib (arrow-cmake arrow) # requires: snappy, thrift, double-conversion
 add_contrib (avro-cmake avro) # requires: snappy
 add_contrib (protobuf-cmake protobuf)
 add_contrib (openldap-cmake openldap)
+add_contrib (openmp-cmake openmp)
 add_contrib (grpc-cmake grpc)
 add_contrib (msgpack-c-cmake msgpack-c)
 
