@@ -128,6 +128,8 @@ void MergeTreeIndexAggregatorAnnoy::update(const Block & block, size_t * pos, si
             toString(*pos), toString(block.rows()));
 
     size_t rows_read = std::min(limit, block.rows() - *pos);
+    if (rows_read == 0)
+        return;
 
     if (index_sample_block.columns() > 1)
     {
@@ -155,7 +157,9 @@ void MergeTreeIndexAggregatorAnnoy::update(const Block & block, size_t * pos, si
         }
         index = std::make_shared<AnnoyIndex>(size);
 
-        for (size_t current_row = 0; current_row < num_rows; ++current_row)
+        index->add_item(index->get_n_items(), &array.data());
+        /// add rows from 1 to offsets.size() - 1 which is equal to the beginning of last row
+        for (size_t current_row = 0; current_row < offsets.size(); ++current_row)
         {
             index->add_item(index->get_n_items(), &array[offsets[current_row]]);
         }
