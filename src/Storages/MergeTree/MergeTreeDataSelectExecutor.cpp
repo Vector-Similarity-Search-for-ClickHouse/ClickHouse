@@ -8,13 +8,16 @@
 #include <Storages/MergeTree/MergeTreeIndexReader.h>
 #include <Storages/MergeTree/KeyCondition.h>
 #include <Storages/MergeTree/MergeTreeDataPartUUID.h>
+#include <Storages/MergeTree/StorageFromMergeTreeDataPart.h>
 #include <Storages/ReadInOrderOptimizer.h>
+#include <Storages/VirtualColumnUtils.h>
 #include <Parsers/ASTIdentifier.h>
 #include <Parsers/ASTLiteral.h>
 #include <Parsers/ASTFunction.h>
 #include <Parsers/ASTSampleRatio.h>
 #include <Parsers/parseIdentifierOrStringLiteral.h>
 #include <Interpreters/ExpressionAnalyzer.h>
+#include <Interpreters/InterpreterSelectQuery.h>
 #include <Interpreters/Context.h>
 #include <Processors/ConcatProcessor.h>
 #include <Processors/QueryPlan/QueryPlan.h>
@@ -26,7 +29,9 @@
 #include <Processors/QueryPlan/UnionStep.h>
 #include <Processors/QueryPlan/QueryIdHolder.h>
 #include <Processors/QueryPlan/AggregatingStep.h>
+#include <Processors/QueryPlan/SortingStep.h>
 #include <Processors/Sources/SourceFromSingleChunk.h>
+#include <Processors/Transforms/AggregatingTransform.h>
 
 #include <Core/UUID.h>
 #include <DataTypes/DataTypeDate.h>
@@ -35,13 +40,10 @@
 #include <DataTypes/DataTypeTuple.h>
 #include <DataTypes/DataTypesNumber.h>
 #include <DataTypes/DataTypeArray.h>
-#include <Storages/VirtualColumnUtils.h>
 
-#include <Interpreters/InterpreterSelectQuery.h>
-
-#include <Processors/Transforms/AggregatingTransform.h>
-#include <Storages/MergeTree/StorageFromMergeTreeDataPart.h>
 #include <IO/WriteBufferFromOStream.h>
+
+#include <Storages/MergeTree/CommonANNIndexes.h>
 
 namespace DB
 {
@@ -184,6 +186,7 @@ QueryPlanPtr MergeTreeDataSelectExecutor::read(
         query_info.projection->desc->type,
         query_info.projection->desc->name);
 
+    const ASTSelectQuery & select_query = query_info.query->as<ASTSelectQuery &>();
     QueryPlanResourceHolder resources;
 
     auto projection_plan = std::make_unique<QueryPlan>();
@@ -229,6 +232,25 @@ QueryPlanPtr MergeTreeDataSelectExecutor::read(
                 = std::make_unique<ExpressionStep>(projection_plan->getCurrentDataStream(), query_info.projection->before_aggregation);
             expression_before_aggregation->setStepDescription("Before GROUP BY");
             projection_plan->addStep(std::move(expression_before_aggregation));
+        }
+
+        /// NOTE: input_order_info (for projection and not) is set only if projection is complete
+        if (query_info.has_order_by && !query_info.need_aggregate && query_info.projection->input_order_info)
+        {
+            chassert(query_info.projection->complete);
+
+            SortDescription output_order_descr = InterpreterSelectQuery::getSortDescription(select_query, context);
+            UInt64 limit = InterpreterSelectQuery::getLimitForSorting(select_query, context);
+
+            auto sorting_step = std::make_unique<SortingStep>(
+                projection_plan->getCurrentDataStream(),
+                query_info.projection->input_order_info->order_key_prefix_descr,
+                output_order_descr,
+                settings.max_block_size,
+                limit);
+
+            sorting_step->setStepDescription("ORDER BY for projections");
+            projection_plan->addStep(std::move(sorting_step));
         }
     }
 
@@ -365,7 +387,7 @@ QueryPlanPtr MergeTreeDataSelectExecutor::read(
                 InputOrderInfoPtr group_by_info = query_info.projection->input_order_info;
                 SortDescription group_by_sort_description;
                 if (group_by_info && settings.optimize_aggregation_in_order)
-                    group_by_sort_description = getSortDescriptionFromGroupBy(query_info.query->as<ASTSelectQuery &>());
+                    group_by_sort_description = getSortDescriptionFromGroupBy(select_query);
                 else
                     group_by_info = nullptr;
 
@@ -383,6 +405,7 @@ QueryPlanPtr MergeTreeDataSelectExecutor::read(
                     merge_threads,
                     temporary_data_merge_threads,
                     /* storage_has_evenly_distributed_read_= */ false,
+                    /* group_by_use_nulls */ false,
                     std::move(group_by_info),
                     std::move(group_by_sort_description),
                     should_produce_results_in_order_of_bucket_number);
@@ -1214,6 +1237,10 @@ static void selectColumnNames(
         {
             virt_column_names.push_back(name);
         }
+        else if (name == LightweightDeleteDescription::FILTER_COLUMN.name)
+        {
+            virt_column_names.push_back(name);
+        }
         else if (name == "_part_uuid")
         {
             virt_column_names.push_back(name);
@@ -1248,6 +1275,7 @@ MergeTreeDataSelectAnalysisResultPtr MergeTreeDataSelectExecutor::estimateNumMar
     const StorageMetadataPtr & metadata_snapshot_base,
     const StorageMetadataPtr & metadata_snapshot,
     const SelectQueryInfo & query_info,
+    const ActionDAGNodes & added_filter_nodes,
     ContextPtr context,
     unsigned num_streams,
     std::shared_ptr<PartitionIdToMaxBlock> max_block_numbers_to_read) const
@@ -1267,6 +1295,8 @@ MergeTreeDataSelectAnalysisResultPtr MergeTreeDataSelectExecutor::estimateNumMar
 
     return ReadFromMergeTree::selectRangesToRead(
         std::move(parts),
+        query_info.prewhere_info,
+        added_filter_nodes,
         metadata_snapshot_base,
         metadata_snapshot,
         query_info,
@@ -1470,6 +1500,9 @@ MarkRanges MergeTreeDataSelectExecutor::markRangesFromPKRange(
     {
         // Do exclusion search, where we drop ranges that do not match
 
+        if (settings.merge_tree_coarse_index_granularity <= 1)
+            throw Exception(ErrorCodes::ARGUMENT_OUT_OF_BOUND, "Setting merge_tree_coarse_index_granularity should be greater than 1");
+
         size_t min_marks_for_seek = roundRowsOrBytesToMarks(
             settings.merge_tree_min_rows_for_seek,
             settings.merge_tree_min_bytes_for_seek,
@@ -1638,6 +1671,31 @@ MarkRanges MergeTreeDataSelectExecutor::filterMarksUsingIndex(
         {
             if (index_mark != index_range.begin || !granule || last_index_mark != index_range.begin)
                 granule = reader.read();
+            // Cast to Ann condition
+            auto ann_condition = std::dynamic_pointer_cast<ApproximateNearestNeighbour::IMergeTreeIndexConditionAnn>(condition);
+            if (ann_condition != nullptr)
+            {
+                // vector of indexes of useful ranges
+                auto result = ann_condition->getUsefulRanges(granule);
+                if (result.empty())
+                {
+                    ++granules_dropped;
+                }
+
+                for (auto range : result)
+                {
+                    // range for corresponding index
+                    MarkRange data_range(
+                        std::max(ranges[i].begin, index_mark * index_granularity + range),
+                        std::min(ranges[i].end, index_mark * index_granularity + range + 1));
+
+                    if (res.empty() || res.back().end - data_range.begin > min_marks_for_seek)
+                        res.push_back(data_range);
+                    else
+                        res.back().end = data_range.end;
+                }
+                continue;
+            }
 
             if (!condition->mayBeTrueOnGranule(granule))
             {

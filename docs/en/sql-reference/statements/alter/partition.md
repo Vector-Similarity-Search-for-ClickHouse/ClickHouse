@@ -1,4 +1,5 @@
 ---
+slug: /en/sql-reference/statements/alter/partition
 sidebar_position: 38
 sidebar_label: PARTITION
 ---
@@ -108,7 +109,8 @@ Note that data will be deleted neither from `table1` nor from `table2`.
 For the query to run successfully, the following conditions must be met:
 
 -   Both tables must have the same structure.
--   Both tables must have the same partition key.
+-   Both tables must have the same partition key, the same order by key and the same primary key.
+-   Both tables must have the same storage policy (a disk where the partition is stored should be available for both tables).
 
 ## REPLACE PARTITION
 
@@ -121,7 +123,8 @@ This query copies the data partition from the `table1` to `table2` and replaces 
 For the query to run successfully, the following conditions must be met:
 
 -   Both tables must have the same structure.
--   Both tables must have the same partition key.
+-   Both tables must have the same partition key, the same order by key and the same primary key.
+-   Both tables must have the same storage policy (a disk where the partition is stored should be available for both tables).
 
 ## MOVE PARTITION TO TABLE
 
@@ -134,9 +137,9 @@ This query moves the data partition from the `table_source` to `table_dest` with
 For the query to run successfully, the following conditions must be met:
 
 -   Both tables must have the same structure.
--   Both tables must have the same partition key.
+-   Both tables must have the same partition key, the same order by key and the same primary key.
+-   Both tables must have the same storage policy (a disk where the partition is stored should be available for both tables).
 -   Both tables must be the same engine family (replicated or non-replicated).
--   Both tables must have the same storage policy.
 
 ## CLEAR COLUMN IN PARTITION
 
