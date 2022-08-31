@@ -129,6 +129,7 @@ if (ENABLE_CURL_BUILD)
     add_contrib (sentry-native-cmake sentry-native) # requires: curl
 endif()
 
+add_contrib (nmslib-cmake nmslib)
 add_contrib (fmtlib-cmake fmtlib)
 add_contrib (krb5-cmake krb5)
 add_contrib (cyrus-sasl-cmake cyrus-sasl) # for krb5

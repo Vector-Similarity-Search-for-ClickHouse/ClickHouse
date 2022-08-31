@@ -8,6 +8,16 @@
 
 #include <boost/algorithm/string.hpp>
 
+#ifdef ENABLE_NMSLIB // to extend stack frame size for nmslib library functions
+
+///TODO: build problems
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wframe-larger-than="
+#include <init.h>
+#include <logging.h>
+#pragma clang diagnostic pop
+
+#endif
 
 namespace DB
 {
@@ -101,6 +111,15 @@ MergeTreeIndexFactory::MergeTreeIndexFactory()
 
     registerCreator("hypothesis", hypothesisIndexCreator);
     registerValidator("hypothesis", hypothesisIndexValidator);
+
+#ifdef ENABLE_NMSLIB
+    similarity::initLibrary(0, LIB_LOGSTDERR, nullptr);
+
+    registerCreator("hnsw", hnswIndexCreator);
+    registerValidator("hnsw", hnswIndexValidator);
+
+#endif
+
 }
 
 MergeTreeIndexFactory & MergeTreeIndexFactory::instance()

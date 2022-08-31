@@ -224,4 +224,10 @@ void bloomFilterIndexValidatorNew(const IndexDescription & index, bool attach);
 MergeTreeIndexPtr hypothesisIndexCreator(const IndexDescription & index);
 void hypothesisIndexValidator(const IndexDescription & index, bool attach);
 
+#ifdef ENABLE_NMSLIB
+
+MergeTreeIndexPtr hnswIndexCreator(const IndexDescription & index);
+void hnswIndexValidator(const IndexDescription & index, bool attach);
+
+#endif
 }
